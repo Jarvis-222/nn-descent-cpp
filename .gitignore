@@ -1,0 +1,14 @@
+build*/
+data/
+plots/
+*.exe
+*.o
+*.obj
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+.vs/
+.vscode/
+*.user
+report.txt
