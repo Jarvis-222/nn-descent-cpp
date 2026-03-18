@@ -12,3 +12,6 @@ Makefile
 .vscode/
 *.user
 report.txt
+venv/
+results/
+__pycache__/

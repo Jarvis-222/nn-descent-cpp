@@ -66,7 +66,7 @@ struct KNNGraph {
     }
 };
 
-enum class InitMethod { RANDOM, LSH, RP_TREE };
+enum class InitMethod { RANDOM, LSH, RP_TREE, PROJECTION };
 enum class DistanceMetric { EUCLIDEAN, COSINE, MANHATTAN };
 
 struct NNDescentConfig {
@@ -77,6 +77,7 @@ struct NNDescentConfig {
     InitMethod init_method = InitMethod::RANDOM;
 
     float rho = 0.5f;
+    int max_candidates = 0;     // mc: if > 0, caps candidate lists at mc (overrides rho)
     float delta = 0.001f;
     int max_iterations = 20;
 
@@ -90,6 +91,11 @@ struct NNDescentConfig {
     // Collision-based distance filtering
     bool use_collision_filter = false;
     int margin = 0;             // safety margin (higher = less aggressive filtering)
+
+    // Projection-based distance filtering (LSH-APG style)
+    bool use_projection_filter = false;
+    int num_projections = 16;   // m: number of random projections
+    float filter_confidence = 0.95f; // pτ: confidence level for chi-squared threshold
 
     std::string output_file = "report.txt";
 };

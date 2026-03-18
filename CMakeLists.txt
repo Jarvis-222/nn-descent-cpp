@@ -17,4 +17,5 @@ add_executable(nn_descent
     src/initializer.cpp
     src/nn_descent.cpp
     src/recall.cpp
+    src/projection_filter.cpp
 )

@@ -1,4 +1,5 @@
 #include "nn_descent.h"
+#include "projection_filter.h"
 #include "recall.h"
 #include <random>
 #include <algorithm>
@@ -25,6 +26,13 @@ NNDescentResult run_nn_descent(
     KNNGraph graph;
     CollisionTable collision_table;
 
+    // --- Build projection filter early if needed for init or filtering ---
+    ProjectionFilter proj_filter;
+    bool proj_filtering = config.use_projection_filter;
+    if (config.init_method == InitMethod::PROJECTION || proj_filtering) {
+        proj_filter.build(data, config.num_projections, config.filter_confidence);
+    }
+
     switch (config.init_method) {
         case InitMethod::LSH:
             std::cout << "[init] LSH (L=" << config.num_tables
@@ -38,6 +46,10 @@ NNDescentResult run_nn_descent(
             std::cout << "[init] RP-Tree (L=" << config.num_tables << ")\n";
             graph = init_rp_tree(data, k, config.num_tables, dist_fn,
                                  collision_table, result.init_dist_comps);
+            break;
+        case InitMethod::PROJECTION:
+            std::cout << "[init] Projection (m=" << config.num_projections << ")\n";
+            graph = proj_filter.init_knn(data, k, dist_fn, result.init_dist_comps);
             break;
         default:
             std::cout << "[init] Random\n";
@@ -58,17 +70,16 @@ NNDescentResult run_nn_descent(
 
     // Phase 2: NN-Descent iterations
 
-    bool filtering = config.use_collision_filter && collision_table.L > 0;
+    bool col_filtering = config.use_collision_filter && collision_table.L > 0;
     long long cumul_dist = result.init_dist_comps;
     std::mt19937 rng(42);
     float convergence_threshold = config.delta * n * k;
 
-    // Precompute reference collision counts once, update incrementally
-    // Direct pointer access to fingerprints (avoid CollisionTable indirection)
+    // --- Collision filter setup (legacy) ---
     std::vector<int> ref_collisions;
     const uint64_t* fp_ptr = nullptr;
     int margin = config.margin;
-    if (filtering) {
+    if (col_filtering) {
         ref_collisions.resize(n, 0);
         fp_ptr = collision_table.fingerprints.data();
         for (int v = 0; v < n; v++) {
@@ -106,8 +117,10 @@ NNDescentResult run_nn_descent(
             }
         }
 
-        // Rho-sampling: limit candidate list sizes
-        int max_sample = std::max(1, (int)(config.rho * k));
+        // Sampling: limit candidate list sizes (mc overrides rho if set)
+        int max_sample = (config.max_candidates > 0)
+            ? config.max_candidates
+            : std::max(1, (int)(config.rho * k));
         for (int v = 0; v < n; v++) {
             if ((int)new_lists[v].size() > max_sample) {
                 std::shuffle(new_lists[v].begin(), new_lists[v].end(), rng);
@@ -151,18 +164,36 @@ NNDescentResult run_nn_descent(
         int prefetch_ahead = 8;
 
         for (int p = 0; p < np; p++) {
-            // Prefetch fingerprints for a future pair
-            if (filtering && p + prefetch_ahead < np) {
+            // Prefetch for a future pair
+            if (p + prefetch_ahead < np) {
                 int pu1 = pairs[p + prefetch_ahead].first;
                 int pu2 = pairs[p + prefetch_ahead].second;
-                __builtin_prefetch(&fp_ptr[pu1 * 2], 0, 0);
-                __builtin_prefetch(&fp_ptr[pu2 * 2], 0, 0);
+                if (col_filtering) {
+                    __builtin_prefetch(&fp_ptr[pu1 * 2], 0, 0);
+                    __builtin_prefetch(&fp_ptr[pu2 * 2], 0, 0);
+                }
+                if (proj_filtering) {
+                    __builtin_prefetch(proj_filter.projection_ptr(pu1), 0, 0);
+                    __builtin_prefetch(proj_filter.projection_ptr(pu2), 0, 0);
+                }
             }
 
             int u1 = pairs[p].first, u2 = pairs[p].second;
 
-            // Filter check — cheap O(1) popcount, skip expensive distance
-            if (filtering) {
+            // Projection filter check (LSH-APG style — theoretically grounded)
+            if (proj_filtering) {
+                const auto& nbs1 = graph.neighbors[u1];
+                const auto& nbs2 = graph.neighbors[u2];
+                float dk1 = nbs1.empty() ? std::numeric_limits<float>::max() : nbs1.back().distance;
+                float dk2 = nbs2.empty() ? std::numeric_limits<float>::max() : nbs2.back().distance;
+                if (proj_filter.should_filter(u1, u2, dk1, dk2)) {
+                    iter_filtered++;
+                    continue;
+                }
+            }
+
+            // Collision filter check (legacy — fingerprint popcount)
+            if (col_filtering) {
                 int ref1 = ref_collisions[u1];
                 int ref2 = ref_collisions[u2];
                 uint64_t s0 = fp_ptr[u1 * 2] & fp_ptr[u2 * 2];
@@ -178,7 +209,7 @@ NNDescentResult run_nn_descent(
             iter_dist++;
             if (graph.try_update(u1, u2, d)) {
                 updates++;
-                if (filtering) {
+                if (col_filtering) {
                     int far = graph.farthest_index(u1);
                     if (far >= 0) {
                         uint64_t s0 = fp_ptr[u1 * 2] & fp_ptr[far * 2];
@@ -189,7 +220,7 @@ NNDescentResult run_nn_descent(
             }
             if (graph.try_update(u2, u1, d)) {
                 updates++;
-                if (filtering) {
+                if (col_filtering) {
                     int far = graph.farthest_index(u2);
                     if (far >= 0) {
                         uint64_t s0 = fp_ptr[u2 * 2] & fp_ptr[far * 2];

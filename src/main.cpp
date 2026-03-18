@@ -24,6 +24,10 @@ static void print_usage(const char* prog) {
         << "  --hash-functions <int> Hash functions per table, K (default: 4)\n"
         << "  --probes <int>         Multi-probe count for init (default: 5)\n"
         << "  --margin <int>         Safety margin for filter (default: 0)\n"
+        << "\nProjection filter options (LSH-APG style):\n"
+        << "  --proj-filter          Enable projected-distance filter\n"
+        << "  --num-projections <int> Number of random projections, m (default: 16)\n"
+        << "  --filter-confidence <f> Chi-squared confidence pτ (default: 0.95)\n"
         << "\nGround truth options:\n"
         << "  --save-gt <file>       Compute and save ground truth to file\n"
         << "  --load-gt <file>       Load precomputed ground truth from file\n"
@@ -58,6 +62,7 @@ int main(int argc, char** argv) {
             std::string m = argv[++i];
             if (m == "lsh") config.init_method = InitMethod::LSH;
             else if (m == "rptree") config.init_method = InitMethod::RP_TREE;
+            else if (m == "projection" || m == "proj") config.init_method = InitMethod::PROJECTION;
             else config.init_method = InitMethod::RANDOM;
         } else if (arg == "--metric" && i + 1 < argc) {
             std::string m = argv[++i];
@@ -66,6 +71,8 @@ int main(int argc, char** argv) {
             else config.metric = DistanceMetric::EUCLIDEAN;
         } else if (arg == "--rho" && i + 1 < argc) {
             config.rho = std::stof(argv[++i]);
+        } else if ((arg == "--max-candidates" || arg == "--mc") && i + 1 < argc) {
+            config.max_candidates = std::stoi(argv[++i]);
         } else if (arg == "--delta" && i + 1 < argc) {
             config.delta = std::stof(argv[++i]);
         } else if (arg == "--max-iter" && i + 1 < argc) {
@@ -80,6 +87,12 @@ int main(int argc, char** argv) {
             config.num_probes = std::stoi(argv[++i]);
         } else if (arg == "--margin" && i + 1 < argc) {
             config.margin = std::stoi(argv[++i]);
+        } else if (arg == "--proj-filter") {
+            config.use_projection_filter = true;
+        } else if (arg == "--num-projections" && i + 1 < argc) {
+            config.num_projections = std::stoi(argv[++i]);
+        } else if (arg == "--filter-confidence" && i + 1 < argc) {
+            config.filter_confidence = std::stof(argv[++i]);
         } else if (arg == "--output" && i + 1 < argc) {
             config.output_file = argv[++i];
         } else if (arg == "--limit" && i + 1 < argc) {
@@ -137,8 +150,10 @@ int main(int argc, char** argv) {
     std::cout << "========================================\n";
     std::cout << "n=" << config.n << " dim=" << config.dim << " k=" << config.k << "\n";
     std::cout << "init=" << (config.init_method == InitMethod::LSH ? "LSH" :
-                              config.init_method == InitMethod::RP_TREE ? "RP-Tree" : "Random") << "\n";
-    std::cout << "filter=" << (config.use_collision_filter ? "ON" : "OFF") << "\n\n";
+                              config.init_method == InitMethod::RP_TREE ? "RP-Tree" :
+                              config.init_method == InitMethod::PROJECTION ? "Projection" : "Random") << "\n";
+    std::cout << "filter=" << (config.use_collision_filter ? "collision" :
+                                config.use_projection_filter ? "projection" : "OFF") << "\n\n";
 
     // Ground truth: load, compute, or skip
     std::vector<std::vector<int>> ground_truth;
