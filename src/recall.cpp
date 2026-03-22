@@ -51,9 +51,9 @@ std::vector<std::vector<int>> compute_ground_truth(
 
 static const char* init_str(InitMethod m) {
     switch (m) {
-        case InitMethod::LSH:     return "LSH";
-        case InitMethod::RP_TREE: return "RP-Tree";
-        default:                  return "Random";
+        case InitMethod::LSH:        return "LSH";
+        case InitMethod::RP_TREE:    return "RP-Tree";
+        default:                     return "Random";
     }
 }
 
@@ -91,10 +91,15 @@ void write_report(const std::string& filename,
         << " metric=" << metric_str(config.metric) << "\n"
         << "rho=" << config.rho << " delta=" << config.delta
         << " max_iter=" << config.max_iterations << "\n"
-        << "filter=" << (config.use_collision_filter ? "ON" : "OFF");
-    if (config.use_collision_filter)
-        out << " tables=" << config.num_tables
+        << "filter=";
+    if (config.use_projection_filter)
+        out << "projection m=" << config.num_projections
+            << " pτ=" << config.filter_confidence;
+    else if (config.use_collision_filter)
+        out << "collision tables=" << config.num_tables
             << " margin=" << config.margin;
+    else
+        out << "OFF";
     out << "\n\n";
 
     // Summary

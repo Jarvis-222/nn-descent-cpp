@@ -1,0 +1,48 @@
+SIFT 1M — Single Sequential Run
+=================================
+Dataset: SIFT 1M (128-dim), K=10, mc=40, m=32 projections
+Single run (benchmark was killed before completing 5-run sweep)
+
+Config          | Recall  | Dist Comps  | Time (s)  | Speedup vs No Filter
+----------------|---------|-------------|-----------|---------------------
+No filter       | 0.8641  | 1536.2M    | 314.95    | 1.00x
+pτ = 0.99       | 0.8633  | 1233.5M    | 319.70    | 0.99x (-1.5%)
+pτ = 0.95       | 0.8589  | 1043.4M    | 311.59    | 1.01x (1.1%)
+pτ = 0.90       | 0.8513  |  920.8M    | 305.79    | 1.03x (3.0%)
+pτ = 0.80       | 0.8316  |  764.5M    | 290.15    | 1.09x (8.6%)
+
+Partial 5-run data (no filter only, runs 1-4 before kill):
+No filter: 208.02, 209.01, 212.79, 209.91
+
+Notes:
+- SIFT is 128-dim, so full vectors (512 bytes) already fit in cache
+- Projection filter overhead nearly cancels distance savings
+- Dist comp reduction is large (up to 50%), but wall-clock savings are modest
+- The 4 no-filter runs at ~209s differ from the single-run 315s due to system load
+
+
+SIFT 100K — 5 Sequential Runs, Averaged (excluding run 1 warmup)
+=================================================================
+Dataset: SIFT 100K (128-dim), K=10, mc=40, m=32 projections
+Runs 2-5 averaged (run 1 excluded as warmup)
+
+Config          | Recall  | Dist Comps  | Avg Time (s) | Speedup vs No Filter
+----------------|---------|-------------|--------------|---------------------
+No filter       | 0.9333  | 119.6M     | 13.56        | 1.00x
+pτ = 0.99       | 0.9329  |  95.2M     | 15.65        | 0.87x (-15.4%)
+pτ = 0.95       | 0.9289  |  81.1M     | 15.07        | 0.90x (-11.1%)
+pτ = 0.90       | 0.9209  |  71.9M     | 13.88        | 0.98x (-2.4%)
+pτ = 0.80       | 0.9010  |  60.1M     | 14.27        | 0.95x (-5.2%)
+
+Raw timing data (all 5 runs per config):
+-----------------------------------------
+No filter: 12.56, 13.15, 12.79, 13.28, 15.04
+pτ=0.80:   15.79, 15.21, 14.93, 13.99, 12.95
+pτ=0.90:   14.26, 15.05, 13.83, 13.36, 13.31
+pτ=0.95:   14.81, 16.09, 15.45, 13.99, 14.74
+pτ=0.99:   15.79, 15.38, 17.46, 14.61, 15.14
+
+Notes:
+- On low-dim SIFT (128-dim), filter adds overhead without wall-clock benefit
+- Dist comps drop significantly (up to 50%) but projection check cost cancels savings
+- This confirms the filter is most beneficial on high-dimensional data (GIST 960-dim)

@@ -50,6 +50,9 @@ void ProjectionFilter::build(const std::vector<std::vector<float>>& data,
     m_ = m;
     int dim = (int)data[0].size();
 
+    // Clamp p_tau to avoid NaN from chi2_inv(1.0, m) = log(0)
+    if (p_tau >= 1.0f) p_tau = 0.999f;
+
     // Compute chi-squared threshold
     float chi2_val = chi2_inv(p_tau, m);
     t_sq_ = chi2_val;
@@ -103,84 +106,4 @@ bool ProjectionFilter::should_filter(int u1, int u2, float dk1, float dk2) const
     // proj_dist² > t² * dk² means: with confidence pτ, true dist > dk.
     // AND condition: both must agree (conservative — same as collision filter).
     return (proj_dsq > t_sq_ * dk1 * dk1) && (proj_dsq > t_sq_ * dk2 * dk2);
-}
-
-KNNGraph ProjectionFilter::init_knn(const std::vector<std::vector<float>>& data,
-                                     int k, DistFunc dist_fn,
-                                     long long& dist_comps) const {
-    int n = n_;
-    int dim = (int)data[0].size();
-    int m = m_;
-
-    // Strategy: sort all points along each projection axis, then for each
-    // point collect its nearest neighbors across all axes. This avoids O(n²).
-    //
-    // For each of the m projection axes, sort points by projected value.
-    // For each point, its neighbors in sorted order along each axis are
-    // likely close in projected space. Collect the W nearest along each
-    // axis → m*W candidates per point, then verify with true distance.
-
-    int W = k; // window per axis = K neighbors each side
-    int total_cands_per_point = m * W;
-
-    std::cout << "[proj-init] Axis-sweep init: m=" << m << " W=" << W
-              << " → ~" << total_cands_per_point << " candidates/point\n";
-
-    // Build sorted index per axis
-    std::vector<std::vector<int>> sorted_idx(m);
-    std::vector<std::vector<int>> rank(m); // rank[axis][point] = position in sorted order
-
-    for (int j = 0; j < m; j++) {
-        sorted_idx[j].resize(n);
-        rank[j].resize(n);
-        for (int i = 0; i < n; i++) sorted_idx[j][i] = i;
-
-        // Sort by projected value on axis j
-        std::sort(sorted_idx[j].begin(), sorted_idx[j].end(),
-            [&](int a, int b) {
-                return projections_[a * m + j] < projections_[b * m + j];
-            });
-
-        // Build rank lookup
-        for (int r = 0; r < n; r++)
-            rank[j][sorted_idx[j][r]] = r;
-    }
-
-    KNNGraph graph(n, k);
-    dist_comps = 0;
-
-    // Timestamp-based dedup: avoids allocating per-point seen arrays
-    std::vector<int> seen_stamp(n, -1);
-    std::vector<int> candidates;
-    candidates.reserve(total_cands_per_point);
-
-    for (int i = 0; i < n; i++) {
-        candidates.clear();
-
-        for (int j = 0; j < m; j++) {
-            int r = rank[j][i];
-            int half = W / 2;
-            int lo = std::max(0, r - half);
-            int hi = std::min(n - 1, r + half);
-            for (int p = lo; p <= hi; p++) {
-                int nb = sorted_idx[j][p];
-                if (nb != i && seen_stamp[nb] != i) {
-                    seen_stamp[nb] = i;
-                    candidates.push_back(nb);
-                }
-            }
-        }
-
-        for (int c : candidates) {
-            float d = dist_fn(data[i].data(), data[c].data(), dim);
-            dist_comps++;
-            graph.try_update(i, c, d);
-        }
-
-        if (i % 10000 == 0 && i > 0)
-            std::cout << "[proj-init] " << i << "/" << n << " points done\n";
-    }
-
-    std::cout << "[proj-init] Done. dist_comps=" << dist_comps << "\n";
-    return graph;
 }

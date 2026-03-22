@@ -26,10 +26,10 @@ NNDescentResult run_nn_descent(
     KNNGraph graph;
     CollisionTable collision_table;
 
-    // --- Build projection filter early if needed for init or filtering ---
+    // --- Build projection filter if needed ---
     ProjectionFilter proj_filter;
     bool proj_filtering = config.use_projection_filter;
-    if (config.init_method == InitMethod::PROJECTION || proj_filtering) {
+    if (proj_filtering) {
         proj_filter.build(data, config.num_projections, config.filter_confidence);
     }
 
@@ -46,10 +46,6 @@ NNDescentResult run_nn_descent(
             std::cout << "[init] RP-Tree (L=" << config.num_tables << ")\n";
             graph = init_rp_tree(data, k, config.num_tables, dist_fn,
                                  collision_table, result.init_dist_comps);
-            break;
-        case InitMethod::PROJECTION:
-            std::cout << "[init] Projection (m=" << config.num_projections << ")\n";
-            graph = proj_filter.init_knn(data, k, dist_fn, result.init_dist_comps);
             break;
         default:
             std::cout << "[init] Random\n";

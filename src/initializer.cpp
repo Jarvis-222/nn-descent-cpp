@@ -16,16 +16,15 @@ KNNGraph init_random(const std::vector<std::vector<float>>& data,
     KNNGraph graph(n, k);
     std::mt19937 rng(42);
 
+    std::uniform_int_distribution<int> uid(0, n - 1);
     for (int i = 0; i < n; i++) {
-        std::vector<int> candidates(n - 1);
-        int idx = 0;
-        for (int j = 0; j < n; j++)
-            if (j != i) candidates[idx++] = j;
-        std::shuffle(candidates.begin(), candidates.end(), rng);
-
-        int take = std::min(k, (int)candidates.size());
-        for (int t = 0; t < take; t++) {
-            int j = candidates[t];
+        // Sample k distinct random neighbors (rejection sampling)
+        std::unordered_set<int> chosen;
+        while ((int)chosen.size() < k) {
+            int j = uid(rng);
+            if (j != i) chosen.insert(j);
+        }
+        for (int j : chosen) {
             float d = dist_fn(data[i].data(), data[j].data(), dim);
             dist_comps++;
             graph.neighbors[i].emplace_back(j, d, true);

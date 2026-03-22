@@ -66,7 +66,7 @@ struct KNNGraph {
     }
 };
 
-enum class InitMethod { RANDOM, LSH, RP_TREE, PROJECTION };
+enum class InitMethod { RANDOM, LSH, RP_TREE };
 enum class DistanceMetric { EUCLIDEAN, COSINE, MANHATTAN };
 
 struct NNDescentConfig {

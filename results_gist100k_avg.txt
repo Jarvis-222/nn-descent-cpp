@@ -1,0 +1,49 @@
+GIST 100K — 5 Sequential Runs, Averaged (excluding run 1 warmup)
+================================================================
+Dataset: GIST 100K (960-dim), K=10, mc=40, m=32 projections
+Runs 2-5 averaged (run 1 excluded as warmup)
+
+Config          | Recall  | Dist Comps  | Avg Time (s) | Speedup vs No Filter
+----------------|---------|-------------|--------------|---------------------
+No filter       | 0.7832  | 126.0M      | 68.51        | 1.00x
+pτ = 0.99       | 0.7831  | 116.0M      | 64.90        | 1.06x (5.3%)
+pτ = 0.95       | 0.7755  | 103.3M      | 59.52        | 1.15x (13.1%)
+pτ = 0.90       | 0.7626  |  93.4M      | 54.73        | 1.25x (20.1%)
+pτ = 0.80       | 0.7330  |  79.3M      | 48.96        | 1.40x (28.6%)
+
+Notes:
+- Recall is deterministic (same seed), so identical across runs
+- Dist comps are deterministic, so identical across runs
+- Time is wall-clock, averaged over runs 2-5 to exclude cold-start effects
+- Single-threaded execution on all runs
+
+Raw timing data (all 5 runs per config):
+-----------------------------------------
+No filter: 91.68, 67.97, 67.57, 68.24, 70.25
+pτ=0.80:   51.03, 49.18, 49.12, 49.34, 48.21
+pτ=0.90:   55.33, 54.70, 54.80, 54.95, 54.25
+pτ=0.95:   59.41, 59.72, 59.84, 59.90, 58.62
+pτ=0.99:   64.38, 65.03, 65.23, 64.72, 64.63
+
+
+MC Sweep — No Filter, 5 Sequential Runs
+========================================
+Dataset: GIST 100K (960-dim), K=10, no projection filter
+Runs 2-5 averaged (run 1 excluded as warmup)
+
+mc  | Recall  | Dist Comps  | Avg Time (s)
+----|---------|-------------|-------------
+10  | 0.5375  |  59.5M      | 38.88
+15  | 0.6361  |  77.4M      | 58.22
+25  | 0.7283  | 104.2M      | 80.24
+30  | 0.7520  | 112.7M      | 64.80
+35  | 0.7700  | 119.8M      | 69.48
+40  | 0.7832  | 126.0M      | 68.51
+
+Raw timing data (all 5 runs per mc):
+-------------------------------------
+mc=10: 37.76, 39.03, 38.49, 39.67, 38.34
+mc=15: 47.98, 56.33, 54.36, 57.36, 64.84
+mc=25: 77.05, 82.09, 82.57, 90.32, 65.98
+mc=30: 64.33, 64.75, 65.39, 64.72, 64.36
+mc=35: 70.46, 68.46, 69.85, 69.66, 69.94

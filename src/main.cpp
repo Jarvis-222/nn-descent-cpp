@@ -62,7 +62,6 @@ int main(int argc, char** argv) {
             std::string m = argv[++i];
             if (m == "lsh") config.init_method = InitMethod::LSH;
             else if (m == "rptree") config.init_method = InitMethod::RP_TREE;
-            else if (m == "projection" || m == "proj") config.init_method = InitMethod::PROJECTION;
             else config.init_method = InitMethod::RANDOM;
         } else if (arg == "--metric" && i + 1 < argc) {
             std::string m = argv[++i];
@@ -151,7 +150,7 @@ int main(int argc, char** argv) {
     std::cout << "n=" << config.n << " dim=" << config.dim << " k=" << config.k << "\n";
     std::cout << "init=" << (config.init_method == InitMethod::LSH ? "LSH" :
                               config.init_method == InitMethod::RP_TREE ? "RP-Tree" :
-                              config.init_method == InitMethod::PROJECTION ? "Projection" : "Random") << "\n";
+                              "Random") << "\n";
     std::cout << "filter=" << (config.use_collision_filter ? "collision" :
                                 config.use_projection_filter ? "projection" : "OFF") << "\n\n";
 

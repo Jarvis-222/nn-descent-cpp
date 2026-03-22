@@ -34,16 +34,6 @@ public:
     //          filtering a true neighbor)
     void build(const std::vector<std::vector<float>>& data, int m, float p_tau);
 
-    // Initialize KNN graph using projected-space distances.
-    //   Finds K approximate nearest neighbors per point in m-dim space,
-    //   then computes true distances for those candidates only.
-    //   data: original full-dim data (for true distance computation)
-    //   k: number of neighbors
-    //   dist_fn: true distance function
-    //   dist_comps: output counter for true distance computations
-    KNNGraph init_knn(const std::vector<std::vector<float>>& data,
-                      int k, DistFunc dist_fn, long long& dist_comps) const;
-
     // Squared projected distance between points u and v in m-dim space.
     float projected_dist_sq(int u, int v) const;
 
