@@ -1,0 +1,160 @@
+=== GIST 1M Sequential Benchmark ===
+--- mc=40 pτ=0.99 ---
+[data] Loaded 1000000 points, dim=960 from data/gist/gist_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=960 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from data/gist1m_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.99 χ²=53.5121 t=7.3152
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=28.1086s
+[iter 1] updates=35675027 dist=170143589 filtered=24863350 rate=12.75% cumul=180143589 recall=0.0003996 join=121.028s time=123.018s
+[iter 2] updates=18508684 dist=197522572 filtered=15811297 rate=7.41153% cumul=377666161 recall=0.0043265 join=136.157s time=137.932s
+[iter 3] updates=14106551 dist=189210645 filtered=14961928 rate=7.32808% cumul=566876806 recall=0.027849 join=130.564s time=132.226s
+[iter 4] updates=10880300 dist=185205846 filtered=15091508 rate=7.53455% cumul=752082652 recall=0.105234 join=127.854s time=129.502s
+[iter 5] updates=7791180 dist=177828543 filtered=14338602 rate=7.46153% cumul=929911195 recall=0.238515 join=122.785s time=124.422s
+[iter 6] updates=4806896 dist=166002976 filtered=13248553 rate=7.39104% cumul=1095914171 recall=0.373526 join=115.005s time=116.668s
+[iter 7] updates=2690410 dist=135125242 filtered=11090626 rate=7.5851% cumul=1231039413 recall=0.468662 join=94.4985s time=96.152s
+[iter 8] updates=1426662 dist=87195138 filtered=7256796 rate=7.68306% cumul=1318234551 recall=0.523904 join=63.3703s time=64.9948s
+[iter 9] updates=749987 dist=49334520 filtered=4091302 rate=7.65791% cumul=1367569071 recall=0.553906 join=37.7952s time=39.39s
+[iter 10] updates=396775 dist=26763033 filtered=2207401 rate=7.6195% cumul=1394332104 recall=0.569763 join=21.8033s time=23.3661s
+[iter 11] updates=211599 dist=14388765 filtered=1177300 rate=7.56325% cumul=1408720869 recall=0.578182 join=12.4358s time=13.9838s
+[iter 12] updates=115851 dist=7745529 filtered=622014 rate=7.43365% cumul=1416466398 recall=0.582705 join=7.08752s time=8.62754s
+[iter 13] updates=63290 dist=4258126 filtered=343296 rate=7.46065% cumul=1420724524 recall=0.585179 join=4.07456s time=5.60995s
+[iter 14] updates=34980 dist=2328015 filtered=187086 rate=7.43851% cumul=1423052539 recall=0.586518 join=2.31568s time=3.84881s
+[iter 15] updates=19558 dist=1294753 filtered=102589 rate=7.34172% cumul=1424347292 recall=0.587275 join=1.31897s time=2.84709s
+[iter 16] updates=11083 dist=723079 filtered=57079 rate=7.31634% cumul=1425070371 recall=0.587692 join=0.754868s time=2.27993s
+[iter 17] updates=6418 dist=407396 filtered=32309 rate=7.34788% cumul=1425477767 recall=0.587931 join=0.430248s time=1.96728s
+[converged] updates=6418 < threshold=10000
+
+[final] Recall = 0.587931
+[final] Total dist_comps = 1425477767
+[final] Total time = 1058.09s
+[report] Written to results/gist1m_pt0.99_r1.txt
+
+Done!
+--- mc=40 pτ=0.95 ---
+[data] Loaded 1000000 points, dim=960 from data/gist/gist_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=960 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from data/gist1m_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.95 χ²=46.1919 t=6.79646
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=28.2622s
+[iter 1] updates=35540410 dist=148033266 filtered=46973673 rate=24.0882% cumul=158033266 recall=0.0003995 join=107.919s time=109.911s
+[iter 2] updates=18384160 dist=176415147 filtered=36958371 rate=17.321% cumul=334448413 recall=0.0043135 join=123.636s time=125.395s
+[iter 3] updates=14006331 dist=168852332 filtered=35437025 rate=17.3465% cumul=503300745 recall=0.0276812 join=118.519s time=120.177s
+[iter 4] updates=10805623 dist=164785399 filtered=35616838 rate=17.7727% cumul=668086144 recall=0.104402 join=115.7s time=117.346s
+[iter 5] updates=7736849 dist=158289718 filtered=33839668 rate=17.613% cumul=826375862 recall=0.236409 join=111.096s time=112.75s
+[iter 6] updates=4771989 dist=147536797 filtered=31293271 rate=17.4989% cumul=973912659 recall=0.369904 join=103.94s time=105.601s
+[iter 7] updates=2676516 dist=119613600 filtered=26033480 rate=17.8744% cumul=1093526259 recall=0.463814 join=85.292s time=86.9341s
+[iter 8] updates=1426599 dist=77098914 filtered=17035883 rate=18.0973% cumul=1170625173 recall=0.518524 join=57.2278s time=58.8525s
+[iter 9] updates=748381 dist=43747022 filtered=9691275 rate=18.1354% cumul=1214372195 recall=0.548174 join=34.2244s time=35.8073s
+[iter 10] updates=395899 dist=23673386 filtered=5234363 rate=18.1071% cumul=1238045581 recall=0.563915 join=19.7617s time=21.3225s
+[iter 11] updates=212221 dist=12752985 filtered=2788219 rate=17.9408% cumul=1250798566 recall=0.572308 join=11.3459s time=12.8879s
+[iter 12] updates=115578 dist=6901430 filtered=1504233 rate=17.8955% cumul=1257699996 recall=0.576844 join=6.46864s time=7.99985s
+[iter 13] updates=63847 dist=3775710 filtered=815259 rate=17.7579% cumul=1261475706 recall=0.579287 join=3.70037s time=5.22059s
+[iter 14] updates=34963 dist=2088820 filtered=452517 rate=17.8063% cumul=1263564526 recall=0.580605 join=2.13433s time=3.6532s
+[iter 15] updates=19878 dist=1147791 filtered=246550 rate=17.6822% cumul=1264712317 recall=0.581356 join=1.20846s time=2.72606s
+[iter 16] updates=11032 dist=654523 filtered=141078 rate=17.7323% cumul=1265366840 recall=0.58177 join=0.699544s time=2.21547s
+[iter 17] updates=6246 dist=365084 filtered=79206 rate=17.8275% cumul=1265731924 recall=0.582 join=0.396084s time=1.9117s
+[converged] updates=6246 < threshold=10000
+
+[final] Recall = 0.582
+[final] Total dist_comps = 1265731924
+[final] Total time = 962.114s
+[report] Written to results/gist1m_pt0.95_r1.txt
+
+Done!
+--- mc=35 no filter ---
+[data] Loaded 1000000 points, dim=960 from data/gist/gist_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=960 k=10
+init=Random
+filter=OFF
+
+[ground-truth] Loaded from data/gist1m_l2_gt.bin (n=1000000 k=10)
+[init] Random
+[init] Done. dist_comps=10000000 time=9.77349s
+[iter 1] updates=35694387 dist=195005875 filtered=0 rate=0% cumul=205005875 recall=0.0003996 join=128.836s time=130.823s
+[iter 2] updates=18067476 dist=196154880 filtered=0 rate=0% cumul=401160755 recall=0.0041723 join=127.924s time=129.709s
+[iter 3] updates=13765518 dist=188961630 filtered=0 rate=0% cumul=590122385 recall=0.0259081 join=123.199s time=124.889s
+[iter 4] updates=10665374 dist=185213463 filtered=0 rate=0% cumul=775335848 recall=0.0967988 join=120.756s time=122.412s
+[iter 5] updates=7723116 dist=176175894 filtered=0 rate=0% cumul=951511742 recall=0.220733 join=114.881s time=116.527s
+[iter 6] updates=4842178 dist=163191846 filtered=0 rate=0% cumul=1114703588 recall=0.349537 join=106.921s time=108.579s
+[iter 7] updates=2775402 dist=135576501 filtered=0 rate=0% cumul=1250280089 recall=0.443505 join=89.2252s time=90.8858s
+[iter 8] updates=1525645 dist=91338754 filtered=0 rate=0% cumul=1341618843 recall=0.500381 join=61.6973s time=63.3244s
+[iter 9] updates=831157 dist=53989928 filtered=0 rate=0% cumul=1395608771 recall=0.532417 join=37.7382s time=39.3216s
+[iter 10] updates=453973 dist=30428194 filtered=0 rate=0% cumul=1426036965 recall=0.549992 join=22.156s time=23.7162s
+[iter 11] updates=250133 dist=16864410 filtered=0 rate=0% cumul=1442901375 recall=0.559631 join=12.8045s time=14.3439s
+[iter 12] updates=139445 dist=9376612 filtered=0 rate=0% cumul=1452277987 recall=0.564943 join=7.43407s time=8.96036s
+[iter 13] updates=79269 dist=5238045 filtered=0 rate=0% cumul=1457516032 recall=0.567905 join=4.30689s time=5.83042s
+[iter 14] updates=44314 dist=2988885 filtered=0 rate=0% cumul=1460504917 recall=0.569545 join=2.52696s time=4.05514s
+[iter 15] updates=25241 dist=1674849 filtered=0 rate=0% cumul=1462179766 recall=0.57046 join=1.45086s time=2.97978s
+[iter 16] updates=14471 dist=952859 filtered=0 rate=0% cumul=1463132625 recall=0.570984 join=0.83861s time=2.36604s
+[iter 17] updates=8610 dist=554972 filtered=0 rate=0% cumul=1463687597 recall=0.571287 join=0.495965s time=2.04748s
+[converged] updates=8610 < threshold=10000
+
+[final] Recall = 0.571287
+[final] Total dist_comps = 1463687597
+[final] Total time = 1003.61s
+[report] Written to results/gist1m_mc35_nofilter_r1.txt
+
+Done!
+--- mc=25 no filter ---
+[data] Loaded 1000000 points, dim=960 from data/gist/gist_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=960 k=10
+init=Random
+filter=OFF
+
+[ground-truth] Loaded from data/gist1m_l2_gt.bin (n=1000000 k=10)
+[init] Random
+[init] Done. dist_comps=10000000 time=9.713s
+[iter 1] updates=35593412 dist=192308562 filtered=0 rate=0% cumul=202308562 recall=0.0003943 join=127.035s time=129.062s
+[iter 2] updates=16620561 dist=151392000 filtered=0 rate=0% cumul=353700562 recall=0.0036677 join=99.2285s time=101.016s
+[iter 3] updates=12839066 dist=153772659 filtered=0 rate=0% cumul=507473221 recall=0.0204717 join=100.72s time=102.408s
+[iter 4] updates=10057886 dist=150142551 filtered=0 rate=0% cumul=657615772 recall=0.0745398 join=98.3064s time=99.9738s
+[iter 5] updates=7478593 dist=140091423 filtered=0 rate=0% cumul=797707195 recall=0.171975 join=91.8812s time=93.5446s
+[iter 6] updates=4926943 dist=127204439 filtered=0 rate=0% cumul=924911634 recall=0.28184 join=83.836s time=85.4982s
+[iter 7] updates=2994123 dist=108987571 filtered=0 rate=0% cumul=1033899205 recall=0.370442 join=72.4879s time=74.1368s
+[iter 8] updates=1779049 dist=81120330 filtered=0 rate=0% cumul=1115019535 recall=0.429955 join=55.1299s time=56.7391s
+[iter 9] updates=1052711 dist=53185750 filtered=0 rate=0% cumul=1168205285 recall=0.466623 join=37.1027s time=38.6947s
+[iter 10] updates=623198 dist=32978012 filtered=0 rate=0% cumul=1201183297 recall=0.488641 join=23.7506s time=25.3311s
+[iter 11] updates=371316 dist=19948723 filtered=0 rate=0% cumul=1221132020 recall=0.501769 join=14.8799s time=16.4196s
+[iter 12] updates=222038 dist=11995273 filtered=0 rate=0% cumul=1233127293 recall=0.509518 join=9.26777s time=10.7883s
+[iter 13] updates=134263 dist=7197999 filtered=0 rate=0% cumul=1240325292 recall=0.514112 join=5.75933s time=7.27833s
+[iter 14] updates=81483 dist=4350366 filtered=0 rate=0% cumul=1244675658 recall=0.516854 join=3.57562s time=5.08953s
+[iter 15] updates=49579 dist=2642567 filtered=0 rate=0% cumul=1247318225 recall=0.518499 join=2.23119s time=3.7571s
+[iter 16] updates=30323 dist=1604665 filtered=0 rate=0% cumul=1248922890 recall=0.519479 join=1.38019s time=2.89569s
+[iter 17] updates=18903 dist=983156 filtered=0 rate=0% cumul=1249906046 recall=0.52008 join=0.8606s time=2.37483s
+[iter 18] updates=11794 dist=612034 filtered=0 rate=0% cumul=1250518080 recall=0.520455 join=0.542296s time=2.05616s
+[iter 19] updates=7523 dist=382363 filtered=0 rate=0% cumul=1250900443 recall=0.520691 join=0.341765s time=1.85497s
+[converged] updates=7523 < threshold=10000
+
+[final] Recall = 0.520691
+[final] Total dist_comps = 1250900443
+[final] Total time = 871.804s
+[report] Written to results/gist1m_mc25_nofilter_r1.txt
+
+Done!
+=== All done! ===
