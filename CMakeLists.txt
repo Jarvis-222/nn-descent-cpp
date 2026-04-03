@@ -18,4 +18,6 @@ add_executable(nn_descent
     src/nn_descent.cpp
     src/recall.cpp
     src/projection_filter.cpp
+    src/graph_search.cpp
+    src/diversify.cpp
 )

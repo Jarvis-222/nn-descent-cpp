@@ -211,6 +211,44 @@ std::vector<std::vector<float>> load_fvecs(const std::string& filename) {
     return data;
 }
 
+// ── Search Recall ────────────────────────────────────────────────────────
+
+double compute_search_recall(const std::vector<std::vector<int>>& search_results,
+                             const std::vector<std::vector<int>>& ground_truth,
+                             int k) {
+    int correct = 0, total = 0;
+    for (int i = 0; i < (int)search_results.size(); i++) {
+        int gt_k = std::min(k, (int)ground_truth[i].size());
+        std::unordered_set<int> gt_set(ground_truth[i].begin(),
+                                        ground_truth[i].begin() + gt_k);
+        int check_k = std::min(k, (int)search_results[i].size());
+        for (int j = 0; j < check_k; j++)
+            if (gt_set.count(search_results[i][j])) correct++;
+        total += gt_k;
+    }
+    return (total > 0) ? (double)correct / total : 0.0;
+}
+
+// ── ivecs Loader ─────────────────────────────────────────────────────────
+
+std::vector<std::vector<int>> load_ivecs(const std::string& filename) {
+    std::vector<std::vector<int>> data;
+    std::ifstream in(filename, std::ios::binary);
+    if (!in.is_open()) { std::cerr << "ERROR: Cannot open " << filename << "\n"; return data; }
+    while (in.good()) {
+        int dim;
+        in.read(reinterpret_cast<char*>(&dim), sizeof(int));
+        if (!in.good()) break;
+        std::vector<int> vec(dim);
+        in.read(reinterpret_cast<char*>(vec.data()), dim * sizeof(int));
+        if (!in.good()) break;
+        data.push_back(std::move(vec));
+    }
+    std::cout << "[data] Loaded " << data.size() << " vectors, dim="
+              << (data.empty() ? 0 : (int)data[0].size()) << " from " << filename << " (ivecs)\n";
+    return data;
+}
+
 // ── Ground Truth I/O ─────────────────────────────────────────────────────
 
 void save_ground_truth(const std::string& filename,

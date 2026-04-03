@@ -25,7 +25,15 @@ void write_report(const std::string& filename,
 std::vector<std::vector<float>> load_data(const std::string& filename);
 std::vector<std::vector<float>> load_fvecs(const std::string& filename);
 std::vector<std::vector<float>> load_mnist_idx(const std::string& filename);
+std::vector<std::vector<int>> load_ivecs(const std::string& filename);
 
 void save_ground_truth(const std::string& filename,
                        const std::vector<std::vector<int>>& gt);
 std::vector<std::vector<int>> load_ground_truth(const std::string& filename);
+
+// Compute search recall: fraction of true k-NN found in search results.
+// search_results[i] has the returned neighbor indices for query i.
+// ground_truth[i] has the true neighbor indices (may have more than k).
+double compute_search_recall(const std::vector<std::vector<int>>& search_results,
+                             const std::vector<std::vector<int>>& ground_truth,
+                             int k);

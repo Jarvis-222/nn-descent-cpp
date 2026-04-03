@@ -1,0 +1,37 @@
+GIST 1M — Results
+================================================================
+Dataset: GIST 1M (960-dim), K=10, mc=40, m=32 projections, random init
+
+Projection Filter (mc=40, varying pτ):
+Config                  | Recall   | Dist Comps  | Time (s) | Speedup | Recall Loss
+------------------------|----------|-------------|----------|---------|------------
+No filter               | 0.5894   | 1,551.5M    | 1056.7   | 1.00x   |    0.00%
+pτ = 0.99               | 0.5879   | 1,425.5M    | 1058.1   | 1.00x   |    0.25%
+pτ = 0.95               | 0.5820   | 1,265.7M    |  962.1   | 1.10x   |    1.26%
+pτ = 0.90               | 0.5720   | 1,143.0M    |  885.8   | 1.19x   |    2.95%
+pτ = 0.85               | 0.5603   | 1,048.4M    |  829.0   | 1.27x   |    4.94%
+pτ = 0.80               | 0.5470   |   968.3M    |  778.5   | 1.36x   |    7.19%
+
+MC Sweep — No Filter (varying mc):
+mc  | Recall   | Dist Comps  | Time (s)
+----|----------|-------------|----------
+25  | 0.5207   | 1,250.9M    |  871.8
+30  | 0.5490   | 1,364.9M    |  942.0
+35  | 0.5713   | 1,463.7M    | 1003.6
+40  | 0.5894   | 1,551.5M    | 1056.7
+
+Filter Rate (avg across iterations):
+pτ = 0.99: ~7.5%
+pτ = 0.95: ~17.5%
+pτ = 0.90: ~25.5%
+pτ = 0.85: ~30.5%
+pτ = 0.80: ~36.7%
+
+Notes:
+- Single run per config (not averaged)
+- mc=40 no-filter baseline from first sequential run
+- mc=30 baseline (0.5490) from second run with different mc
+- m=16 pτ=0.80 also tested: recall=0.5285, dist=1027.2M, time=770.5s
+  → m=32 strictly dominates m=16 (more filtering, less recall loss)
+- Filter is most effective on GIST due to high dimensionality (960-dim)
+  where projection check (O(32)) << full distance (O(960))
