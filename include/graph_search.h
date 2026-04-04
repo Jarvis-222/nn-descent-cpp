@@ -13,10 +13,10 @@ struct SearchResult {
     long long total_dist_comps;
 };
 
-// Greedy beam search on a k-NN graph (PyNNDescent / HNSW-style).
+// Greedy beam search on a k-NN graph (PyNNDescent-style).
 //
 // For each query q:
-//   1. Start from `num_entry_points` random graph nodes.
+//   1. Use `num_entry_points` random projection trees to seed initial candidates.
 //   2. Maintain a candidate pool of size `ef` (beam width).
 //   3. Greedily expand the closest unvisited candidate's neighbors.
 //   4. Stop when the closest candidate is farther than the ef-th best found.
@@ -34,7 +34,7 @@ struct SearchResult {
 //   search_k: how many neighbors to return per query
 //   ef: beam width / search expansion factor (ef >= search_k)
 //   epsilon: backtracking tolerance (0.0 = pure greedy)
-//   num_entry_points: random starting points per query
+//   num_entry_points: number of RP-tree starts / search trees to probe
 //   dist_fn: distance function
 SearchResult graph_search(
     const KNNGraph& graph,

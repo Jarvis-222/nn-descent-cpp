@@ -16,7 +16,7 @@ inline float euclidean_distance(const float* a, const float* b, int dim) {
     return std::sqrt(sum);
 }
 
-inline float cosine_distance(cruonst float* a, const float* b, int dim) {
+inline float cosine_distance(const float* a, const float* b, int dim) {
     float dot = 0.0f, na = 0.0f, nb = 0.0f;
     for (int i = 0; i < dim; i++) {
         dot += a[i] * b[i];

@@ -84,7 +84,7 @@ struct NNDescentConfig {
     DistanceMetric metric = DistanceMetric::EUCLIDEAN;
 
     // LSH parameters (used for both init and filtering)
-    int num_tables = 20;        // L: number of hash tables
+    int num_tables = 0;         // L: hash tables / RP trees (0 = method-specific default)
     int num_hash_functions = 4; // K: hash functions per table (E2LSH)
     int num_probes = 5;         // multi-probe neighboring buckets
 

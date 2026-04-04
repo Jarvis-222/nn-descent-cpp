@@ -1,0 +1,46 @@
+[data] Loaded 100000 points, dim=960 from data/gist/gist_base_100k.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=100000 dim=960 k=10
+init=Random
+filter=OFF
+
+[ground-truth] Loaded from data/gist100k_l2_gt.bin (n=100000 k=10)
+[init] Random
+[init] Done. dist_comps=1000000 time=1.10372s
+[iter 1] updates=3567747 dist=19500500 filtered=0 rate=0% cumul=20500500 recall=0.003948 join=13.8768s time=14.1608s
+[iter 2] updates=1845227 dist=21324674 filtered=0 rate=0% cumul=41825174 recall=0.039883 join=14.1699s time=14.4274s
+[iter 3] updates=1332328 dist=20466318 filtered=0 rate=0% cumul=62291492 recall=0.192162 join=14.6602s time=14.8813s
+[iter 4] updates=834391 dist=20742019 filtered=0 rate=0% cumul=83033511 recall=0.441792 join=14.88s time=15.0889s
+[iter 5] updates=410907 dist=20346614 filtered=0 rate=0% cumul=103380125 recall=0.633836 join=13.9976s time=14.2079s
+[iter 6] updates=162229 dist=13380313 filtered=0 rate=0% cumul=116760438 recall=0.725024 join=9.16744s time=9.39169s
+[iter 7] updates=59553 dist=5680027 filtered=0 rate=0% cumul=122440465 recall=0.76062 join=4.23661s time=4.45477s
+[iter 8] updates=22330 dist=2196725 filtered=0 rate=0% cumul=124637190 recall=0.774261 join=1.86757s time=2.07816s
+[iter 9] updates=9007 dist=838660 filtered=0 rate=0% cumul=125475850 recall=0.779712 join=0.843606s time=1.05371s
+[iter 10] updates=3694 dist=338759 filtered=0 rate=0% cumul=125814609 recall=0.781945 join=0.340103s time=0.585199s
+[iter 11] updates=1497 dist=138810 filtered=0 rate=0% cumul=125953419 recall=0.782837 join=0.141037s time=0.367181s
+[iter 12] updates=605 dist=58409 filtered=0 rate=0% cumul=126011828 recall=0.783193 join=0.0665047s time=0.26467s
+[converged] updates=605 < threshold=1000
+
+[final] Recall = 0.783193
+[final] Total dist_comps = 126011828
+[final] Total time = 92.2701s
+[report] Written to results/rerun_gist100k_random_nofilter_search.txt
+
+========================================
+  Graph Search
+========================================
+[data] Loaded 1000 points, dim=960 from data/gist/gist_query_heldout_1k.fvecs (fvecs)
+[data] Loaded 1000 vectors, dim=10 from data/gist100k_search_gt_heldout_1k.ivecs (ivecs)
+queries=1000 search_k=10 epsilon=0.1 entry_points=1
+ef_list=10,20,50,100
+
+ef,recall@10,QPS,dist_comps,time_sec
+10,0.4027,3823.4,229069,0.2615
+20,0.4714,2700.1,360010,0.3704
+50,0.5616,1586.1,650487,0.6305
+100,0.6241,1011.9,1010375,0.9882
+
+Done!

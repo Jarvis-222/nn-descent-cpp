@@ -1,0 +1,44 @@
+[data] Loaded 100000 points, dim=960 from data/gist/gist_base_100k.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=100000 dim=960 k=10
+init=RP-Tree
+filter=OFF
+
+[ground-truth] Loaded from data/gist100k_l2_gt.bin (n=100000 k=10)
+[init] RP-Tree (L=10)
+[rp-tree] PyNNDescent-style: L=10 leaf_size=50
+[rp-tree] Done. trees=10 leaf_pairs=16036303 dist_comps=16036303
+[init] Done. dist_comps=16036303 time=26.3943s
+[iter 1] updates=781552 dist=20912610 filtered=0 rate=0% cumul=36948913 recall=0.532217 join=14.5383s time=14.7439s
+[iter 2] updates=347239 dist=19949006 filtered=0 rate=0% cumul=56897919 recall=0.704508 join=13.1792s time=13.3773s
+[iter 3] updates=120586 dist=12640871 filtered=0 rate=0% cumul=69538790 recall=0.775851 join=9.2883s time=9.51845s
+[iter 4] updates=39581 dist=5044752 filtered=0 rate=0% cumul=74583542 recall=0.800916 join=4.5483s time=4.83385s
+[iter 5] updates=13132 dist=1663099 filtered=0 rate=0% cumul=76246641 recall=0.809425 join=1.79903s time=2.08736s
+[iter 6] updates=4423 dist=549740 filtered=0 rate=0% cumul=76796381 recall=0.812364 join=0.584602s time=0.853592s
+[iter 7] updates=1550 dist=185390 filtered=0 rate=0% cumul=76981771 recall=0.813344 join=0.184855s time=0.455506s
+[iter 8] updates=536 dist=64719 filtered=0 rate=0% cumul=77046490 recall=0.813691 join=0.108534s time=0.360192s
+[converged] updates=536 < threshold=1000
+
+[final] Recall = 0.813691
+[final] Total dist_comps = 77046490
+[final] Total time = 72.7698s
+[report] Written to results/rerun_gist100k_rptree_nofilter_search.txt
+
+========================================
+  Graph Search
+========================================
+[data] Loaded 1000 points, dim=960 from data/gist/gist_query_heldout_1k.fvecs (fvecs)
+[data] Loaded 1000 vectors, dim=10 from data/gist100k_search_gt_heldout_1k.ivecs (ivecs)
+queries=1000 search_k=10 epsilon=0.1 entry_points=1
+ef_list=10,20,50,100
+
+ef,recall@10,QPS,dist_comps,time_sec
+10,0.4047,4343.5,230055,0.2302
+20,0.4757,2223.6,361523,0.4497
+50,0.5620,1169.3,652591,0.8552
+100,0.6289,809.9,1016747,1.2347
+
+Done!

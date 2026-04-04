@@ -1,0 +1,46 @@
+[data] Loaded 100000 points, dim=960 from data/gist/gist_base_100k.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=100000 dim=960 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from data/gist100k_l2_gt.bin (n=100000 k=10)
+[proj-filter] Building: m=32 pτ=0.9 χ²=42.5765 t=6.52506
+[proj-filter] Done. Storage: 12 MB
+[init] RP-Tree (L=10)
+[rp-tree] PyNNDescent-style: L=10 leaf_size=50
+[rp-tree] Done. trees=10 leaf_pairs=16036303 dist_comps=16036303
+[init] Done. dist_comps=16036303 time=37.0056s
+[iter 1] updates=759340 dist=16242553 filtered=4670057 rate=22.3313% cumul=32278856 recall=0.526262 join=16.4794s time=16.801s
+[iter 2] updates=338215 dist=15137721 filtered=4716346 rate=23.7551% cumul=47416577 recall=0.691819 join=15.3726s time=15.6484s
+[iter 3] updates=117544 dist=9320888 filtered=3126860 rate=25.1199% cumul=56737465 recall=0.759924 join=10.1104s time=10.3719s
+[iter 4] updates=38449 dist=3641680 filtered=1286854 rate=26.1103% cumul=60379145 recall=0.783705 join=4.59735s time=4.85712s
+[iter 5] updates=12711 dist=1200326 filtered=421185 rate=25.9748% cumul=61579471 recall=0.791726 join=1.8784s time=2.14143s
+[iter 6] updates=4187 dist=394333 filtered=137640 rate=25.8735% cumul=61973804 recall=0.794369 join=0.63469s time=0.872864s
+[iter 7] updates=1432 dist=130320 filtered=45304 rate=25.796% cumul=62104124 recall=0.795267 join=0.227117s time=0.491377s
+[iter 8] updates=493 dist=43669 filtered=15260 rate=25.8956% cumul=62147793 recall=0.795561 join=0.0809603s time=0.305016s
+[converged] updates=493 < threshold=1000
+
+[final] Recall = 0.795561
+[final] Total dist_comps = 62147793
+[final] Total time = 88.6462s
+[report] Written to results/gist100k_rptree_pt090_search.txt
+
+========================================
+  Graph Search
+========================================
+[data] Loaded 1000 points, dim=960 from data/gist/gist_query_heldout_1k.fvecs (fvecs)
+[data] Loaded 1000 vectors, dim=10 from data/gist100k_search_gt_heldout_1k.ivecs (ivecs)
+queries=1000 search_k=10 epsilon=0.1 entry_points=1
+ef_list=10,20,50,100
+
+ef,recall@10,QPS,dist_comps,time_sec
+10,0.4065,2605.0,229397,0.3839
+20,0.4779,1620.0,361253,0.6173
+50,0.5632,858.9,654534,1.1643
+100,0.6299,589.8,1017988,1.6955
+
+Done!

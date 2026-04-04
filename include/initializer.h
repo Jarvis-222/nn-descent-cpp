@@ -56,7 +56,7 @@ KNNGraph init_lsh(const std::vector<std::vector<float>>& data,
 
 KNNGraph init_rp_tree(const std::vector<std::vector<float>>& data,
                       int k, int L, DistFunc dist_fn,
-                      CollisionTable& table_out, long long& dist_comps);
+                      long long& dist_comps);
 
 // Build hash tables (can be called separately for random init + filter)
 CollisionTable build_lsh_table(const std::vector<std::vector<float>>& data, int L, int K = 4);

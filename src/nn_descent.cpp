@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <iostream>
 
 NNDescentResult run_nn_descent(
@@ -35,25 +36,36 @@ NNDescentResult run_nn_descent(
 
     switch (config.init_method) {
         case InitMethod::LSH:
-            std::cout << "[init] LSH (L=" << config.num_tables
+        {
+            int num_tables = (config.num_tables > 0) ? config.num_tables : 20;
+            std::cout << "[init] LSH (L=" << num_tables
                       << " K=" << config.num_hash_functions
                       << " probes=" << config.num_probes << ")\n";
-            graph = init_lsh(data, k, config.num_tables, config.num_hash_functions,
+            graph = init_lsh(data, k, num_tables, config.num_hash_functions,
                              config.num_probes, dist_fn, collision_table,
                              result.init_dist_comps);
             break;
+        }
         case InitMethod::RP_TREE:
-            std::cout << "[init] RP-Tree (L=" << config.num_tables << ")\n";
-            graph = init_rp_tree(data, k, config.num_tables, dist_fn,
-                                 collision_table, result.init_dist_comps);
+        {
+            int num_trees = (config.num_tables > 0) ? config.num_tables : 0;
+            int resolved_trees = (num_trees > 0) ? num_trees
+                : std::max(3, std::min(12, (int)std::round(2.0 * std::log10((double)n))));
+            std::cout << "[init] RP-Tree (L=" << resolved_trees << ")\n";
+            graph = init_rp_tree(data, k, num_trees, dist_fn, result.init_dist_comps);
+            if (config.use_collision_filter) {
+                collision_table = build_rp_tree_table(data, resolved_trees);
+            }
             break;
+        }
         default:
             std::cout << "[init] Random\n";
             graph = init_random(data, k, dist_fn, result.init_dist_comps);
             if (config.use_collision_filter) {
-                std::cout << "[init] Building collision table (L=" << config.num_tables
+                int num_tables = (config.num_tables > 0) ? config.num_tables : 20;
+                std::cout << "[init] Building collision table (L=" << num_tables
                           << " K=" << config.num_hash_functions << ")\n";
-                collision_table = build_lsh_table(data, config.num_tables,
+                collision_table = build_lsh_table(data, num_tables,
                                                  config.num_hash_functions);
             }
             break;

@@ -324,9 +324,15 @@ KNNGraph init_lsh(const std::vector<std::vector<float>>& data,
 //  3. RP-Tree Initialization (PyNNDescent-style)
 //
 //  Split: pick two random DATA POINTS, use the perpendicular bisector hyperplane.
-//  Leaf size: max(60, min(256, 5*k)) — large leaves for dense local neighborhoods.
+//  Leaf size: approximately 5*k, capped at 256 (matching PyNNDescent docs).
 //  Init: all pairwise distances within each leaf (no collision counting).
 // ============================================================================
+
+static int default_rp_tree_count(int n) {
+    if (n <= 1) return 3;
+    double trees = std::round(2.0 * std::log10((double)n));
+    return std::max(3, std::min(12, (int)trees));
+}
 
 // Recursively split indices by two-point hyperplane until leaves are small enough.
 static void rp_tree_split(
@@ -346,32 +352,46 @@ static void rp_tree_split(
     while (bi == ai) bi = uid(rng);
     int pa = indices[ai], pb = indices[bi];
 
-    // Hyperplane: normal = (b - a), split at midpoint projection
-    float midpoint_proj = 0.0f;
+    // Hyperplane: normal = (a - b), with offset so the plane bisects the two points.
+    float hyperplane_offset = 0.0f;
     std::vector<float> normal(dim);
     for (int d = 0; d < dim; d++) {
-        normal[d] = data[pb][d] - data[pa][d];
-        midpoint_proj += normal[d] * (data[pa][d] + data[pb][d]) * 0.5f;
+        normal[d] = data[pa][d] - data[pb][d];
+        hyperplane_offset -= normal[d] * (data[pa][d] + data[pb][d]) * 0.5f;
     }
 
-    // Partition points by which side of the hyperplane they fall on
+    // Partition points by which side of the hyperplane they fall on.
+    // PyNNDescent breaks ties randomly and randomizes degenerate splits.
     std::vector<int> left, right;
     left.reserve(indices.size() / 2);
     right.reserve(indices.size() / 2);
+    std::uniform_int_distribution<int> coin(0, 1);
     for (int idx : indices) {
-        float proj = 0.0f;
+        float margin = hyperplane_offset;
         for (int d = 0; d < dim; d++)
-            proj += normal[d] * data[idx][d];
-        if (proj <= midpoint_proj)
+            margin += normal[d] * data[idx][d];
+        if (std::fabs(margin) < 1e-8f) {
+            if (coin(rng) == 0) left.push_back(idx);
+            else                right.push_back(idx);
+        } else if (margin > 0.0f) {
             left.push_back(idx);
-        else
+        } else {
             right.push_back(idx);
+        }
     }
 
-    // Degenerate split: all points on one side → make this a leaf
+    // Degenerate split: randomly repartition instead of terminating early.
     if (left.empty() || right.empty()) {
-        all_leaves.push_back(indices);
-        return;
+        left.clear();
+        right.clear();
+        for (int idx : indices) {
+            if (coin(rng) == 0) left.push_back(idx);
+            else                right.push_back(idx);
+        }
+        if (left.empty() || right.empty()) {
+            all_leaves.push_back(indices);
+            return;
+        }
     }
 
     rp_tree_split(data, dim, left, leaf_size, max_depth, depth + 1, rng, all_leaves);
@@ -381,13 +401,14 @@ static void rp_tree_split(
 // Build L RP-trees, compute all pairwise distances within each leaf.
 KNNGraph init_rp_tree(const std::vector<std::vector<float>>& data,
                       int k, int L, DistFunc dist_fn,
-                      CollisionTable& table_out, long long& dist_comps) {
+                      long long& dist_comps) {
     int n = (int)data.size();
     int dim = (int)data[0].size();
     KNNGraph graph(n, k);
     std::mt19937 rng(42);
 
-    int leaf_size = std::max(60, std::min(256, 5 * k));
+    if (L <= 0) L = default_rp_tree_count(n);
+    int leaf_size = std::max(10, std::min(256, 5 * k));
     int max_depth = 200;
 
     std::cout << "[rp-tree] PyNNDescent-style: L=" << L
@@ -420,9 +441,6 @@ KNNGraph init_rp_tree(const std::vector<std::vector<float>>& data,
 
     std::cout << "[rp-tree] Done. trees=" << L << " leaf_pairs=" << leaf_pairs
               << " dist_comps=" << dist_comps << "\n";
-
-    // Build collision table fingerprints (needed if collision filter is used later)
-    table_out = build_rp_tree_table(data, L);
     return graph;
 }
 

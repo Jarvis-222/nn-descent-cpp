@@ -1,0 +1,48 @@
+[data] Loaded 100000 points, dim=960 from data/gist/gist_base_100k.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=100000 dim=960 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from data/gist100k_l2_gt.bin (n=100000 k=10)
+[proj-filter] Building: m=32 pτ=0.95 χ²=46.1919 t=6.79646
+[proj-filter] Done. Storage: 12 MB
+[init] Random
+[init] Done. dist_comps=1000000 time=2.88341s
+[iter 1] updates=3552927 dist=14752770 filtered=4747730 rate=24.3467% cumul=15752770 recall=0.003947 join=13.5776s time=13.87s
+[iter 2] updates=1831915 dist=17624731 filtered=3703196 rate=17.3631% cumul=33377501 recall=0.03979 join=14.4427s time=14.6968s
+[iter 3] updates=1320408 dist=16975588 filtered=3509490 rate=17.1319% cumul=50353089 recall=0.190966 join=13.5631s time=13.7519s
+[iter 4] updates=827318 dist=17255570 filtered=3470902 rate=16.7462% cumul=67608659 recall=0.437828 join=15.3578s time=15.5373s
+[iter 5] updates=408155 dist=16969913 filtered=3356779 rate=16.5141% cumul=84578572 recall=0.628418 join=13.4588s time=13.661s
+[iter 6] updates=161546 dist=11061201 filtered=2277591 rate=17.0749% cumul=95639773 recall=0.718159 join=10.9626s time=11.1735s
+[iter 7] updates=59222 dist=4701693 filtered=966731 rate=17.0547% cumul=100341466 recall=0.753193 join=4.43075s time=4.65878s
+[iter 8] updates=22527 dist=1802658 filtered=376702 rate=17.285% cumul=102144124 recall=0.766725 join=1.56244s time=1.73349s
+[iter 9] updates=9023 dist=700169 filtered=144527 rate=17.1099% cumul=102844293 recall=0.772189 join=0.649025s time=0.805019s
+[iter 10] updates=3540 dist=285599 filtered=59081 rate=17.1408% cumul=103129892 recall=0.774302 join=0.293654s time=0.479906s
+[iter 11] updates=1427 dist=113064 filtered=23742 rate=17.3545% cumul=103242956 recall=0.775147 join=0.125356s time=0.294985s
+[iter 12] updates=585 dist=45537 filtered=9321 rate=16.9911% cumul=103288493 recall=0.775488 join=0.0524096s time=0.260283s
+[converged] updates=585 < threshold=1000
+
+[final] Recall = 0.775488
+[final] Total dist_comps = 103288493
+[final] Total time = 93.9917s
+[report] Written to results/rerun_gist100k_random_pt095_search.txt
+
+========================================
+  Graph Search
+========================================
+[data] Loaded 1000 points, dim=960 from data/gist/gist_query_heldout_1k.fvecs (fvecs)
+[data] Loaded 1000 vectors, dim=10 from data/gist100k_search_gt_heldout_1k.ivecs (ivecs)
+queries=1000 search_k=10 epsilon=0.1 entry_points=1
+ef_list=10,20,50,100
+
+ef,recall@10,QPS,dist_comps,time_sec
+10,0.3995,4279.2,229636,0.2337
+20,0.4733,2719.6,361789,0.3677
+50,0.5597,1532.8,651537,0.6524
+100,0.6243,1006.3,1012077,0.9938
+
+Done!
