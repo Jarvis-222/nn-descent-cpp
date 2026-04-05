@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
+trap 'echo "[error] Command failed: $BASH_COMMAND" >&2' ERR
 
-BIN="${BIN:-./build/nn_descent}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+BIN="${BIN:-$SCRIPT_DIR/build/nn_descent}"
 DATASET="${1:-100k}"
 
 case "$DATASET" in
   100k)
-    DATA="data/gist/gist_base_100k.fvecs"
-    GT="data/gist100k_l2_gt.bin"
+    DATA="$SCRIPT_DIR/data/gist/gist_base_100k.fvecs"
+    GT="$SCRIPT_DIR/data/gist100k_l2_gt.bin"
     TAG="gist100k"
     ;;
   1m)
-    DATA="data/gist/gist_base.fvecs"
-    GT="data/gist1m_l2_gt.bin"
+    DATA="$SCRIPT_DIR/data/gist/gist_base.fvecs"
+    GT="$SCRIPT_DIR/data/gist1m_l2_gt.bin"
     TAG="gist1m"
     ;;
   *)
@@ -30,13 +32,34 @@ ONLY_INIT="${ONLY_INIT:-}"
 MAX_JOBS="${MAX_JOBS:-0}"
 job_count=0
 
-mkdir -p results graphs
+RESULTS_DIR="$SCRIPT_DIR/results"
+GRAPHS_DIR="$SCRIPT_DIR/graphs"
+
+if [[ ! -x "$BIN" ]]; then
+  echo "[error] Binary not found or not executable: $BIN"
+  echo "Build first with:"
+  echo "  cmake -S \"$SCRIPT_DIR\" -B \"$SCRIPT_DIR/build\" -DCMAKE_BUILD_TYPE=Release"
+  echo "  cmake --build \"$SCRIPT_DIR/build\" -j"
+  exit 1
+fi
+
+if [[ ! -f "$DATA" ]]; then
+  echo "[error] Data file not found: $DATA"
+  exit 1
+fi
+
+if [[ ! -f "$GT" ]]; then
+  echo "[error] Ground-truth file not found: $GT"
+  exit 1
+fi
+
+mkdir -p "$RESULTS_DIR" "$GRAPHS_DIR"
 
 run_one() {
   local init="$1"
   local pt="$2"
-  local out_base="results/${TAG}_${init}"
-  local graph_base="graphs/${TAG}_${init}"
+  local out_base="$RESULTS_DIR/${TAG}_${init}"
+  local graph_base="$GRAPHS_DIR/${TAG}_${init}"
   local cmd=(
     "$BIN"
     --data "$DATA"
@@ -69,6 +92,7 @@ run_one() {
 }
 
 echo "=== GIST graph construction sweep ==="
+echo "repo=$SCRIPT_DIR"
 echo "dataset=$DATASET"
 echo "data=$DATA"
 echo "gt=$GT"
