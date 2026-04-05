@@ -9,6 +9,7 @@
 #include "nn_descent.h"
 #include "recall.h"
 #include "graph_search.h"
+#include "graph_io.h"
 #include "diversify.h"
 
 static void print_usage(const char* prog) {
@@ -49,6 +50,8 @@ static void print_usage(const char* prog) {
         << "  --entry-points <int>   RP-tree starts / search trees per query (default: 1)\n"
         << "\nOutput options:\n"
         << "  --output <file>        Output report file (default: results/report.txt)\n"
+        << "  --save-graph <file>    Save final graph for later reuse\n"
+        << "  --load-graph <file>    Load a saved graph and skip construction\n"
         << "\nExamples:\n"
         << "  " << prog << " --data sift_base.fvecs --k 30 --init rptree --load-gt data/sift1m_gt.bin"
         << " --query sift_query.fvecs --search-gt sift_groundtruth.ivecs --ef 10,20,50,100\n";
@@ -59,6 +62,8 @@ int main(int argc, char** argv) {
     std::string data_file;
     std::string save_gt_file;
     std::string load_gt_file;
+    std::string save_graph_file;
+    std::string load_graph_file;
     int syn_n = 0, syn_dim = 0;
     int data_limit = 0;
     bool compute_gt = true;
@@ -119,6 +124,10 @@ int main(int argc, char** argv) {
             config.filter_confidence = std::stof(argv[++i]);
         } else if (arg == "--output" && i + 1 < argc) {
             config.output_file = argv[++i];
+        } else if (arg == "--save-graph" && i + 1 < argc) {
+            save_graph_file = argv[++i];
+        } else if (arg == "--load-graph" && i + 1 < argc) {
+            load_graph_file = argv[++i];
         } else if (arg == "--limit" && i + 1 < argc) {
             data_limit = std::stoi(argv[++i]);
         } else if (arg == "--save-gt" && i + 1 < argc) {
@@ -217,32 +226,63 @@ int main(int argc, char** argv) {
         }
     }
 
-    NNDescentResult result = run_nn_descent(data, config, ground_truth);
-
+    KNNGraph graph;
     double final_recall = 0.0;
-    auto predicted = result.graph.get_index_matrix();
-    if (!ground_truth.empty()) {
-        final_recall = compute_recall(predicted, ground_truth);
-        std::cout << "\n[final] Recall = " << final_recall << "\n";
-    }
-    std::cout << "[final] Total dist_comps = " << result.total_dist_comps << "\n";
-    std::cout << "[final] Total time = " << result.total_time_sec << "s\n";
+    bool built_graph = load_graph_file.empty();
 
-    write_report(config.output_file, config, result.iter_log,
-                 result.init_dist_comps, result.init_time_sec,
-                 result.total_time_sec, final_recall, predicted, ground_truth);
+    if (built_graph) {
+        NNDescentResult result = run_nn_descent(data, config, ground_truth);
+        graph = std::move(result.graph);
+
+        auto predicted = graph.get_index_matrix();
+        if (!ground_truth.empty()) {
+            final_recall = compute_recall(predicted, ground_truth);
+            std::cout << "\n[final] Recall = " << final_recall << "\n";
+        }
+        std::cout << "[final] Total dist_comps = " << result.total_dist_comps << "\n";
+        std::cout << "[final] Total time = " << result.total_time_sec << "s\n";
+
+        write_report(config.output_file, config, result.iter_log,
+                     result.init_dist_comps, result.init_time_sec,
+                     result.total_time_sec, final_recall, predicted, ground_truth);
+    } else {
+        if (!load_knn_graph(load_graph_file, graph)) {
+            std::cerr << "ERROR: Failed to load graph from " << load_graph_file << "\n";
+            return 1;
+        }
+        if (graph.n != config.n) {
+            std::cerr << "ERROR: Graph size mismatch. graph.n=" << graph.n
+                      << " data.n=" << config.n << "\n";
+            return 1;
+        }
+        if (!ground_truth.empty()) {
+            auto predicted = graph.get_index_matrix();
+            final_recall = compute_recall(predicted, ground_truth);
+            std::cout << "[loaded-graph] Recall = " << final_recall << "\n";
+        }
+        std::cout << "[loaded-graph] Loaded from " << load_graph_file
+                  << " (n=" << graph.n << ", k=" << graph.k << ")\n";
+    }
 
     // ── Diversification (RNG pruning) ──────────────────────────────────
     if (diversify_alpha > 0.0f) {
         DistFunc dist_fn = get_distance_function(config.metric);
-        DiversifyStats ds = diversify_graph(result.graph, data, diversify_alpha, dist_fn);
+        DiversifyStats ds = diversify_graph(graph, data, diversify_alpha, dist_fn);
 
         // Recompute recall after pruning (neighbor lists are shorter now)
         if (!ground_truth.empty()) {
-            auto pruned = result.graph.get_index_matrix();
+            auto pruned = graph.get_index_matrix();
             double pruned_recall = compute_recall(pruned, ground_truth);
             std::cout << "[diversify] Recall after pruning = " << pruned_recall << "\n";
         }
+    }
+
+    if (!save_graph_file.empty()) {
+        if (!save_knn_graph(save_graph_file, graph)) {
+            std::cerr << "ERROR: Failed to save graph to " << save_graph_file << "\n";
+            return 1;
+        }
+        std::cout << "[graph] Saved graph to " << save_graph_file << "\n";
     }
 
     // ── Graph Search Mode ──────────────────────────────────────────────
@@ -283,7 +323,7 @@ int main(int argc, char** argv) {
         std::cout << "ef,recall@" << sk << ",QPS,dist_comps,time_sec\n";
 
         for (int ef : ef_list) {
-            SearchResult sr = graph_search(result.graph, data, queries,
+            SearchResult sr = graph_search(graph, data, queries,
                                            sk, ef, epsilon,
                                            num_entry_points, dist_fn);
 

@@ -19,5 +19,6 @@ add_executable(nn_descent
     src/recall.cpp
     src/projection_filter.cpp
     src/graph_search.cpp
+    src/graph_io.cpp
     src/diversify.cpp
 )
