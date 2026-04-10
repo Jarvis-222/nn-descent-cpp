@@ -17,3 +17,5 @@ graphs/
 __pycache__/
 *.bin
 *.tar.gz
+*.knng
+graphs/

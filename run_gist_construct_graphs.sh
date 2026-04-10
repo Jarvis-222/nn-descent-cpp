@@ -26,8 +26,8 @@ esac
 K=10
 MC=40
 PROJ=32
-PTS=("0.80" "0.75" "0.70" "0.65" "0.60")
-INITS=( "rptree")
+PTS=("0.90" "0.85" "0.80" "0.75" "0.70" "0.65" "0.60")
+INITS=("random" "rptree")
 ONLY_INIT="${ONLY_INIT:-}"
 MAX_JOBS="${MAX_JOBS:-0}"
 job_count=0
@@ -126,4 +126,3 @@ done
 
 echo
 echo "=== All graph construction jobs completed ==="
-

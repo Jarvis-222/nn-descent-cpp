@@ -60,4 +60,3 @@ KNNGraph init_rp_tree(const std::vector<std::vector<float>>& data,
 
 // Build hash tables (can be called separately for random init + filter)
 CollisionTable build_lsh_table(const std::vector<std::vector<float>>& data, int L, int K = 4);
-CollisionTable build_rp_tree_table(const std::vector<std::vector<float>>& data, int L);

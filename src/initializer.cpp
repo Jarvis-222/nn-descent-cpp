@@ -14,6 +14,8 @@
 static void random_fill(KNNGraph& graph, int i, int k,
                         const std::vector<std::vector<float>>& data,
                         DistFunc dist_fn, std::mt19937& rng, long long& dist_comps) {
+
+                            
     int n = (int)data.size();
     int dim = (int)data[0].size();
     if ((int)graph.neighbors[i].size() >= k) return;
@@ -408,7 +410,7 @@ KNNGraph init_rp_tree(const std::vector<std::vector<float>>& data,
     std::mt19937 rng(42);
 
     if (L <= 0) L = default_rp_tree_count(n);
-    int leaf_size = std::max(10, std::min(256, 5 * k));
+    int leaf_size = std::max(60, std::min(256, 5 * k));
     int max_depth = 200;
 
     std::cout << "[rp-tree] PyNNDescent-style: L=" << L
@@ -444,74 +446,12 @@ KNNGraph init_rp_tree(const std::vector<std::vector<float>>& data,
     return graph;
 }
 
-// ============================================================================
-//  4. Legacy RP-tree table builder (for collision filter fingerprints only)
-//
-//  Uses random Gaussian direction + median split — different from the
-//  PyNNDescent two-point split above. Only used to generate fingerprints
-//  when collision filtering is enabled alongside RP-tree init.
-// ============================================================================
 
-static void rp_tree_split_legacy(const std::vector<std::vector<float>>& data,
-                                  const std::vector<float>& proj_dir, int dim,
-                                  std::vector<int>& indices, std::vector<int>& codes,
-                                  int current_code, int depth, int max_depth,
-                                  std::mt19937& rng) {
-    if ((int)indices.size() <= 8 || depth >= max_depth) {
-        for (int idx : indices) codes[idx] = current_code;
-        return;
-    }
 
-    std::vector<std::pair<float, int>> projections;
-    projections.reserve(indices.size());
-    for (int idx : indices) {
-        float p = 0.0f;
-        for (int d = 0; d < dim; d++) p += proj_dir[d] * data[idx][d];
-        projections.push_back({p, idx});
-    }
-    std::sort(projections.begin(), projections.end());
 
-    int mid = (int)projections.size() / 2;
-    std::normal_distribution<float> normal_dist(0.0f, 1.0f);
-    std::vector<float> child_dir(dim);
-    for (int d = 0; d < dim; d++) child_dir[d] = normal_dist(rng);
 
-    std::vector<int> left_idx, right_idx;
-    for (int i = 0; i < mid; i++) left_idx.push_back(projections[i].second);
-    for (int i = mid; i < (int)projections.size(); i++) right_idx.push_back(projections[i].second);
 
-    rp_tree_split_legacy(data, child_dir, dim, left_idx, codes, current_code * 2, depth + 1, max_depth, rng);
-    rp_tree_split_legacy(data, child_dir, dim, right_idx, codes, current_code * 2 + 1, depth + 1, max_depth, rng);
-}
 
-CollisionTable build_rp_tree_table(const std::vector<std::vector<float>>& data, int L) {
-    int n = (int)data.size();
-    int dim = (int)data[0].size();
 
-    CollisionTable table;
-    table.n = n;
-    table.L = L;
-    table.total_hashes = L;
-    table.codes.assign(n, std::vector<int>(L, 0));
-    table.filter_codes.assign(n, std::vector<int>(L, 0));
 
-    std::mt19937 rng(42);
-    std::normal_distribution<float> normal_dist(0.0f, 1.0f);
-    int max_depth = std::max(4, (int)std::ceil(std::log2(n / 8.0)));
 
-    for (int l = 0; l < L; l++) {
-        std::vector<float> dir(dim);
-        for (int d = 0; d < dim; d++) dir[d] = normal_dist(rng);
-        std::vector<int> all_indices(n);
-        std::iota(all_indices.begin(), all_indices.end(), 0);
-        std::vector<int> codes(n, 0);
-        rp_tree_split_legacy(data, dir, dim, all_indices, codes, 1, 0, max_depth, rng);
-        for (int i = 0; i < n; i++) {
-            table.codes[i][l] = codes[i];
-            table.filter_codes[i][l] = codes[i];
-        }
-    }
-
-    table.build_fingerprints();
-    return table;
-}

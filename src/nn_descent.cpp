@@ -27,12 +27,6 @@ NNDescentResult run_nn_descent(
     KNNGraph graph;
     CollisionTable collision_table;
 
-    // --- Build projection filter if needed ---
-    ProjectionFilter proj_filter;
-    bool proj_filtering = config.use_projection_filter;
-    if (proj_filtering) {
-        proj_filter.build(data, config.num_projections, config.filter_confidence);
-    }
 
     switch (config.init_method) {
         case InitMethod::LSH:
@@ -53,9 +47,6 @@ NNDescentResult run_nn_descent(
                 : std::max(3, std::min(12, (int)std::round(2.0 * std::log10((double)n))));
             std::cout << "[init] RP-Tree (L=" << resolved_trees << ")\n";
             graph = init_rp_tree(data, k, num_trees, dist_fn, result.init_dist_comps);
-            if (config.use_collision_filter) {
-                collision_table = build_rp_tree_table(data, resolved_trees);
-            }
             break;
         }
         default:
@@ -76,6 +67,16 @@ NNDescentResult run_nn_descent(
     std::cout << "[init] Done. dist_comps=" << result.init_dist_comps
               << " time=" << result.init_time_sec << "s\n";
 
+
+    
+
+    // --- Build projection filter if needed ---
+    ProjectionFilter proj_filter;
+    bool proj_filtering = config.use_projection_filter;
+    if (proj_filtering) {
+        proj_filter.build(data, config.num_projections, config.filter_confidence);
+    }
+
     // Phase 2: NN-Descent iterations
 
     bool col_filtering = config.use_collision_filter && collision_table.L > 0;
@@ -83,7 +84,7 @@ NNDescentResult run_nn_descent(
     std::mt19937 rng(42);
     float convergence_threshold = config.delta * n * k;
 
-    // --- Collision filter setup (legacy) ---
+    // --- Collision filter setup (old method).......
     std::vector<int> ref_collisions;
     const uint64_t* fp_ptr = nullptr;
     int margin = config.margin;
