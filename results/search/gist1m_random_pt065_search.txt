@@ -1,0 +1,28 @@
+[data] Loaded 1000000 points, dim=960 from /home/j2pandya/nn-descent/nn-descent-cpp/data/gist/gist_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=960 k=10
+init=Random
+filter=OFF
+
+[loaded-graph] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/graphs/gist1m_random_pt065.knng (n=1000000, k=10)
+
+========================================
+  Graph Search
+========================================
+[data] Loaded 1000 points, dim=960 from /home/j2pandya/nn-descent/nn-descent-cpp/data/gist/gist_query.fvecs (fvecs)
+[data] Loaded 1000 vectors, dim=100 from /home/j2pandya/nn-descent/nn-descent-cpp/data/gist/gist_groundtruth.ivecs (ivecs)
+queries=1000 search_k=10 epsilon=0.1 entry_points=1
+ef_list=10,20,50,100,200,400
+
+ef,recall@10,QPS,dist_comps,time_sec
+10,0.2502,3944.6,262342,0.2535
+20,0.2979,2461.3,438910,0.4063
+50,0.3701,1261.2,864760,0.7929
+100,0.4283,761.6,1438899,1.3130
+200,0.4865,458.7,2360763,2.1799
+400,0.5456,278.1,3824833,3.5964
+
+Done!

@@ -13,7 +13,7 @@ Makefile
 *.user
 report.txt
 venv/
-
+graphs/
 __pycache__/
 *.bin
 *.tar.gz

@@ -14,7 +14,7 @@ case "$DATASET" in
     ;;
   1m)
     DATA="$SCRIPT_DIR/data/gist/gist_base.fvecs"
-    GT="$SCRIPT_DIR/data/gist1m_l2_gt.bin"
+    GT=""  # construction GT too expensive for 1M; use --no-gt
     TAG="gist1m"
     ;;
   *)
@@ -26,8 +26,8 @@ esac
 K=10
 MC=40
 PROJ=32
-PTS=("nofilter" "0.99" "0.95" "0.90" "0.85" "0.80" "0.75" "0.70" "0.65" "0.60")
-INITS=("random" "rptree")
+PTS=("0.80" "0.75" "0.70" "0.65" "0.60")
+INITS=( "rptree")
 ONLY_INIT="${ONLY_INIT:-}"
 MAX_JOBS="${MAX_JOBS:-0}"
 job_count=0
@@ -48,7 +48,7 @@ if [[ ! -f "$DATA" ]]; then
   exit 1
 fi
 
-if [[ ! -f "$GT" ]]; then
+if [[ -n "$GT" && ! -f "$GT" ]]; then
   echo "[error] Ground-truth file not found: $GT"
   exit 1
 fi
@@ -66,8 +66,13 @@ run_one() {
     --k "$K"
     --mc "$MC"
     --init "$init"
-    --load-gt "$GT"
   )
+
+  if [[ -n "$GT" ]]; then
+    cmd+=(--load-gt "$GT")
+  else
+    cmd+=(--no-gt)
+  fi
 
   local suffix
   if [[ "$pt" == "nofilter" ]]; then
@@ -121,3 +126,4 @@ done
 
 echo
 echo "=== All graph construction jobs completed ==="
+
