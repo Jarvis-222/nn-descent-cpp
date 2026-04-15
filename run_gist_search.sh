@@ -59,8 +59,9 @@ for graph_file in "$GRAPHS_DIR"/${TAG}_*.knng; do
     --search-gt "$SEARCH_GT" \
     --search-k "$K" \
     --ef "$EFS" \
+	--entry-points 10 \
     2>&1 | tee "$report"
-
+ 
   echo
 done
 

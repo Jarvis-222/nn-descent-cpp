@@ -14,15 +14,15 @@ filter=OFF
 ========================================
 [data] Loaded 1000 points, dim=960 from /home/j2pandya/nn-descent/nn-descent-cpp/data/gist/gist_query.fvecs (fvecs)
 [data] Loaded 1000 vectors, dim=100 from /home/j2pandya/nn-descent/nn-descent-cpp/data/gist/gist_groundtruth.ivecs (ivecs)
-queries=1000 search_k=10 epsilon=0.1 entry_points=1
+queries=1000 search_k=10 epsilon=0.1 entry_points=10
 ef_list=10,20,50,100,200,400
 
 ef,recall@10,QPS,dist_comps,time_sec
-10,0.2568,3924.4,262159,0.2548
-20,0.3002,2442.1,438063,0.4095
-50,0.3748,1251.2,863403,0.7992
-100,0.4303,757.9,1430676,1.3194
-200,0.4918,457.4,2347676,2.1864
-400,0.5445,278.8,3798356,3.5867
+10,0.4328,1519.1,504400,0.6583
+20,0.5137,1205.8,692383,0.8293
+50,0.6087,770.8,1205546,1.2974
+100,0.6625,517.9,1880520,1.9309
+200,0.6975,351.1,2836869,2.8483
+400,0.7295,232.4,4321666,4.3029
 
 Done!
