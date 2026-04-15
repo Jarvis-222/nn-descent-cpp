@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 BIN="${BIN:-$SCRIPT_DIR/build/nn_descent}"
 
 DATA="$SCRIPT_DIR/data/sift/sift_base.fvecs"
-GT="$SCRIPT_DIR/data/sift1M_l2_gt.bin"
+GT="$SCRIPT_DIR/data/sift1m_l2_gt.bin"
 TAG="sift1m"
 
 K=10
@@ -106,4 +106,3 @@ done
 
 echo
 echo "=== All SIFT 1M graph construction jobs completed ==="
-

@@ -1,0 +1,190 @@
+\section{Background and Related Work}
+\label{sec:related}
+
+\subsection{Approximate Nearest Neighbor Search}
+\label{sec:ann}
+
+Given a dataset $\mathcal{D} \subset \mathbb{R}^d$ of $n$ points, the nearest neighbor search problem asks to find the point $p^* \in \mathcal{D}$ closest to a query point $q$ under a distance metric $d(\cdot, \cdot)$.
+Exact nearest neighbor search requires $\Omega(nd)$ time in the worst case, which becomes prohibitive for large-scale, high-dimensional datasets common in modern applications such as retrieval-augmented generation (RAG), recommendation systems, and embedding-based search.
+
+The approximate nearest neighbor (ANN) problem relaxes this requirement by allowing a bounded error.
+
+\begin{definition}[$(1+\epsilon)$-Approximate Nearest Neighbor]
+\label{def:epsilon-ann}
+Given a metric space $(X, d)$, a dataset $\mathcal{D} \subset X$, and a query point $q \in X$, let $p^* \in \mathcal{D}$ be the true nearest neighbor of $q$ such that $d(q, p^*) \le d(q, p)$ for all $p \in \mathcal{D}$. For any $\epsilon > 0$, a point $\hat{p} \in \mathcal{D}$ is a $(1+\epsilon)$-approximate nearest neighbor of $q$ if:
+\begin{equation}
+d(q, \hat{p}) \le (1 + \epsilon) \, d(q, p^*).
+\end{equation}
+\end{definition}
+
+The ANN problem has been approached through several paradigms.
+\textbf{Locality-Sensitive Hashing (LSH)}~\cite{indyk1998,datar2004} maps nearby points to the same hash bucket with high probability, enabling sub-linear query time with theoretical guarantees but requiring substantial space.
+\textbf{Space-partitioning trees} such as KD-trees~\cite{bentley1975} and random projection trees (RP-trees)~\cite{dasgupta2008} recursively partition the space, offering efficient low-dimensional search but degrading in high dimensions due to the curse of dimensionality.
+\textbf{Product quantization (PQ)}~\cite{jegou2011pq} compresses vectors into compact codes by decomposing the space into Cartesian products of subspaces, enabling fast approximate distance computation with reduced memory.
+\textbf{Graph-based methods}~\cite{malkov2020,dong2011} construct proximity graphs where nodes are data points and edges connect approximate neighbors, supporting greedy traversal for search.
+Among these, graph-based approaches have emerged as the dominant paradigm, offering superior recall-throughput trade-offs on standard benchmarks~\cite{annbenchmarks}.
+
+\subsection{Construction Recall vs.\ Search Recall}
+\label{sec:construction_recall}
+
+In graph-based ANN, it is important to distinguish between \emph{construction recall} and \emph{search recall}, as they measure fundamentally different quantities.
+
+\textbf{Construction recall} measures the fraction of true $k$-nearest neighbors that appear in each node's neighbor list in the constructed graph:
+\begin{equation}
+    \text{Recall}_{\text{constr}} = \frac{1}{n} \sum_{i=1}^{n} \frac{|N_G(i) \cap N^*(i)|}{k}
+    \label{eq:construction_recall}
+\end{equation}
+where $N_G(i)$ is the set of $k$ neighbors of point $i$ in the constructed graph and $N^*(i)$ is the set of its true $k$-nearest neighbors computed via brute force.
+This metric directly evaluates the quality of the graph construction algorithm---a construction recall of 0.6 means that, on average, 60\% of each node's true nearest neighbors are present in its neighbor list.
+
+\textbf{Search recall}, by contrast, measures the fraction of true $k$-nearest neighbors returned by a search algorithm (such as greedy beam search) that operates on the constructed graph at query time:
+\begin{equation}
+    \text{Recall}_{\text{search}} = \frac{1}{|\mathcal{Q}|} \sum_{q \in \mathcal{Q}} \frac{|S(q) \cap N^*(q)|}{k}
+    \label{eq:search_recall}
+\end{equation}
+where $\mathcal{Q}$ is the set of queries, $S(q)$ is the set of $k$ results returned by the search algorithm for query $q$, and $N^*(q)$ is the set of true $k$-nearest neighbors of $q$ in the dataset.
+
+A graph with moderate construction recall (e.g., 0.60) can still achieve high search recall (e.g., 0.90+) because the search algorithm explores beyond immediate neighbors through multi-hop greedy traversal, effectively compensating for missing edges in the local neighborhood.
+In this work, we primarily report construction recall, as it directly reflects the quality of the graph produced by NN-Descent and is the metric most affected by our filtering approach.
+
+\subsection{Queries Per Second (QPS)}
+\label{sec:qps}
+
+Queries per second (QPS) is the standard throughput metric for evaluating ANN search systems.
+It measures the number of queries that the system can answer per unit time:
+\begin{equation}
+    \text{QPS} = \frac{|\mathcal{Q}|}{T_{\text{search}}}
+\end{equation}
+where $|\mathcal{Q}|$ is the number of queries processed and $T_{\text{search}}$ is the total wall-clock time for all queries.
+
+In practice, there is a fundamental trade-off between QPS and recall: exploring more of the graph at query time increases the probability of finding true neighbors (higher recall) but requires more distance computations (lower QPS).
+The standard way to evaluate ANN systems is through Pareto plots of recall versus QPS, where a system dominates another if it achieves higher recall at the same QPS, or higher QPS at the same recall~\cite{annbenchmarks}.
+Parameters such as the search beam width or exploration factor control this trade-off and are typically swept to generate the full Pareto curve.
+
+\subsection{NN-Descent}
+\label{sec:nndescent}
+
+NN-Descent, proposed by Dong et al.~\cite{dong2011}, is a graph-based algorithm for constructing approximate $k$-nearest neighbor ($k$-NN) graphs.
+The core intuition is simple: \emph{a neighbor of a neighbor is likely also a neighbor}.
+Starting from a random graph, the algorithm iteratively refines the neighbor lists by comparing each point's neighbors with each other, exploiting the transitivity of proximity.
+
+\subsubsection{Algorithm Overview}
+
+The algorithm proceeds as follows:
+\begin{enumerate}
+    \item \textbf{Initialization:} Each point is assigned $k$ random neighbors, forming an initial (poor) approximation of the $k$-NN graph.
+    \item \textbf{Local Join:} For each point $u$, all pairs $(v_1, v_2)$ drawn from $u$'s neighbor list are compared. If $d(v_1, v_2)$ is smaller than the distance to $v_1$'s or $v_2$'s current farthest neighbor, the respective neighbor list is updated.
+    \item \textbf{New/Old Partitioning:} Neighbors are tagged as \textsc{New} (added in the current or previous iteration) or \textsc{Old} (unchanged). Only pairs involving at least one \textsc{New} neighbor are evaluated, as \textsc{Old}--\textsc{Old} pairs have already been compared. This avoids redundant distance computations.
+    \item \textbf{Sampling:} To limit the number of candidate pairs, each point samples at most $\rho k$ new neighbors and $\rho k$ old neighbors for the local join, where $\rho \in (0, 1]$ is the sampling rate.
+    \item \textbf{Convergence:} The algorithm terminates when the fraction of neighbor list updates per iteration falls below a threshold $\delta$ (typically $\delta = 0.001$), indicating that the graph has stabilized.
+\end{enumerate}
+
+Dong et al.\ report an empirical complexity of $O(n^{1.14})$ distance computations for constructing the $k$-NN graph, making NN-Descent substantially faster than the brute-force $O(n^2 d)$ approach.
+The algorithm's simplicity and embarrassingly parallel local-join structure make it well-suited for parallelization, which has led to its adoption as the construction backbone in systems such as CAGRA~\cite{ootomo2024} for GPU-accelerated graph building.
+
+Despite its efficiency, the dominant cost of NN-Descent is the \emph{exact distance computation} in the local join.
+As the graph converges, the vast majority of candidate pairs do not lead to graph updates, yet each still incurs the full $O(d)$ cost.
+This waste problem, which we quantify in Section~\ref{sec:waste}, is the primary motivation for our work.
+
+\subsection{Improvements on NN-Descent}
+\label{sec:nndescent_improvements}
+
+As Figure~\ref{fig:waste} illustrates, NN-Descent with random initialization starts with a graph of nearly zero construction recall and requires five to six iterations just to reach the $\approx 0.3$ recall level that tree-based initialization attains directly.
+Starting from such a low-quality graph has several undesirable consequences.
+First, virtually every candidate pair examined in the early iterations can trigger a graph update, which in the worst case allows the number of updates to grow on the order of $k^2 n$, and for variants that retain more than $k$ candidates per point this growth is even larger.
+Second, the quality of the final graph is sensitive to the random seed used for initialization: different seeds can lead to noticeably different convergence trajectories and final recall.
+Tree-based space-partitioning structures, although not competitive as standalone indexes in high dimensions, are nevertheless very effective at separating \emph{clearly distant} vectors at low cost.
+This makes them well-suited for initialization: they produce a starting graph with non-trivial recall, reduce the number of refinement iterations required, and largely eliminate the seed-dependence of random initialization.
+Additionally, the original NN-Descent paper~\cite{dong2011} focuses solely on graph construction and does not specify a search procedure; the tree structures built for initialization can be naturally reused at query time to provide entry points for graph-based search, closing this gap.
+Two systems, PyNNDescent and EFANNA, build on these observations using different tree structures and have become the standard reference implementations of NN-Descent in practice.
+
+\subsubsection{PyNNDescent}
+\label{sec:pynndescent}
+
+PyNNDescent~\cite{pynndescent}, developed by McInnes as part of the UMAP ecosystem, initializes the $k$-NN graph using multiple \textbf{random projection trees (RP-trees)}~\cite{dasgupta2008}.
+An RP-tree recursively partitions the data along random hyperplanes, so points falling into the same leaf are likely to be close in the original space.
+Using the leaf co-occurrences from $L$ trees (typically $L = 10$ with leaf size $\approx 5k$) yields an initial graph with roughly 30\% construction recall, which NN-Descent then refines.
+At query time, the same RP-trees are reused to identify candidate entry points, after which a greedy beam search is performed on the graph.
+
+\subsubsection{EFANNA}
+\label{sec:efanna}
+
+EFANNA, proposed by Fu and Cai~\cite{fu2016}, follows the same hybrid recipe but uses multiple randomized \textbf{truncated KD-trees} instead of RP-trees.
+A truncated KD-tree terminates subdivision once a leaf contains $K$ points (rather than a single point), which makes tree construction substantially faster than classical KD-trees.
+The initial graph is constructed via a hierarchical divide-and-conquer procedure over these trees, and is then refined with standard NN-Descent iterations.
+Like PyNNDescent, EFANNA also provides a search algorithm that uses the KD-trees to generate initial candidates, followed by NN-expansion on the graph.
+
+A particularly relevant empirical finding from the EFANNA paper is that \emph{moderate losses in construction recall do not translate into proportional losses in search recall}.
+Specifically, Fu and Cai report that on SIFT~1M an EFANNA index built on a graph with only $60\%$ construction recall still achieves search recall comparable to using the exact ground-truth $k$-NN graph, and substantially better than tree-only indexes such as FLANN~\cite{muja2014}.
+The reason is that the ``missing'' neighbors in an approximate graph are not random points: on SIFT~1M, $98.9\%$ of the entries in a $60\%$-accurate $10$-NN graph constructed by EFANNA still lie within the true $100$ nearest neighbors.
+In other words, the errors are ``near misses'' rather than outliers, and greedy graph search can easily navigate past them through multi-hop traversal.
+This observation is important for our work: it suggests that small reductions in construction recall induced by a filter during graph building can be tolerated, since they have a disproportionately small effect on downstream search quality.
+
+Despite these improvements, neither PyNNDescent nor EFANNA addresses the core inefficiency of the NN-Descent iterations themselves---namely, the high volume of exact distance computations that do not update the graph.
+Neither system applies any form of distance filtering inside the local-join loop, which is the gap our work targets.
+
+\subsection{Filtering in Graph-Based ANN}
+\label{sec:filtering}
+
+Recent work has explored the idea of using cheap approximate distance estimates to \emph{filter} candidate pairs before computing their exact distances, thereby reducing the computational cost of graph construction or search.
+We discuss two approaches that directly motivate our work.
+
+\subsubsection{LSH-APG}
+\label{sec:lsh_apg}
+
+LSH-APG (Locality-Sensitive Hashing for Approximate Proximity Graph construction), proposed by Zhao et al.~\cite{zhao2023}, integrates locality-sensitive hashing into proximity graph construction.
+Their key contribution relevant to our work is a \textbf{projection-based distance filter} that uses random projections and chi-squared concentration bounds to cheaply identify candidate pairs that are unlikely to be neighbors.
+
+The filter works as follows.
+Given $m$ random Gaussian vectors $\mathbf{a}_1, \ldots, \mathbf{a}_m \sim \mathcal{N}(0, I_d)$, each data point $x \in \mathbb{R}^d$ is projected to a lower-dimensional representation:
+\begin{equation}
+    P(x) = \big(\mathbf{a}_1 \cdot x, \;\; \mathbf{a}_2 \cdot x, \;\; \ldots, \;\; \mathbf{a}_m \cdot x\big) \in \mathbb{R}^m
+    \label{eq:projection}
+\end{equation}
+These projections are computed once during preprocessing at a cost of $O(n \cdot m \cdot d)$.
+
+The theoretical foundation rests on the \textbf{concentration of projected distances}.
+For any two points $u, v \in \mathbb{R}^d$ with Euclidean distance $\|u - v\|_2$, the squared projected distance satisfies:
+\begin{equation}
+    \frac{\|P(u) - P(v)\|^2}{\|u - v\|_2^2} \sim \chi^2(m)
+    \label{eq:chi2}
+\end{equation}
+where $\chi^2(m)$ denotes the chi-squared distribution with $m$ degrees of freedom.
+This follows from the fact that each component $\mathbf{a}_i \cdot (u - v)$ is an independent Gaussian with variance $\|u - v\|_2^2$, so the sum of their squares (after normalization) follows a chi-squared distribution.
+
+By the chi-squared concentration inequality, for a confidence level $p_\tau \in (0, 1)$:
+\begin{equation}
+    \Pr\!\Big[\|P(u) - P(v)\|^2 \leq \chi^2_{p_\tau}(m) \cdot \|u - v\|_2^2\Big] \geq p_\tau
+    \label{eq:concentration}
+\end{equation}
+where $\chi^2_{p_\tau}(m)$ is the $p_\tau$-quantile of the chi-squared distribution with $m$ degrees of freedom.
+In words: with probability at least $p_\tau$, the squared projected distance is no larger than $\chi^2_{p_\tau}(m)$ times the true squared distance.
+
+The contrapositive gives the filtering criterion: if the projected distance exceeds $\chi^2_{p_\tau}(m) \cdot r^2$ for a reference distance $r$, then with confidence $p_\tau$, the true distance exceeds $r$, and the pair can be safely skipped.
+LSH-APG applies this filter during HNSW-style graph construction, achieving significant reductions in distance computations during the neighbor candidate evaluation phase.
+
+Our work adapts this projection-based filtering idea specifically to the \emph{local-join} structure of NN-Descent, where the reference distance $r$ is naturally defined as the current farthest neighbor distance $d_k(u)$ for each endpoint, and the filter is applied with a conservative conjunctive (AND) condition requiring both endpoints to agree that the pair is far.
+
+\subsubsection{FINGER}
+\label{sec:finger}
+
+FINGER (Fast Inference for Graph-based approximate nearest neighbor search using projections for the Estimation of distanRes), proposed by Chen et al.~\cite{chen2023finger}, takes a complementary approach: rather than filtering during graph \emph{construction}, it accelerates graph \emph{search} (query time) on an already-built HNSW index.
+
+The key idea is to precompute a low-rank approximation of the dataset and use it to cheaply estimate distances during the greedy beam search.
+Specifically, FINGER computes a rank-$r$ approximation of the data matrix using randomized SVD:
+\begin{equation}
+    X \approx U_r \Sigma_r V_r^\top
+\end{equation}
+where $U_r \in \mathbb{R}^{n \times r}$, $\Sigma_r \in \mathbb{R}^{r \times r}$, and $V_r \in \mathbb{R}^{d \times r}$.
+For each data point, the projected representation $\tilde{x}_i = V_r^\top x_i \in \mathbb{R}^r$ is stored.
+
+During search, for a candidate pair $(q, x_i)$, FINGER first computes the projected distance $\|\tilde{q} - \tilde{x}_i\|^2$ in $O(r)$ time.
+Using concentration bounds on the residual (the component orthogonal to the projection subspace), FINGER derives a \emph{lower bound} on the true distance:
+\begin{equation}
+    \|q - x_i\|^2 \geq \|\tilde{q} - \tilde{x}_i\|^2 + \text{LB}_{\text{residual}}
+\end{equation}
+If this lower bound exceeds the current search radius, the candidate is pruned without computing the full $O(d)$ distance.
+
+FINGER reports 20--60\% speedups on high-dimensional datasets while maintaining the same recall as standard HNSW search.
+The approach is complementary to ours: FINGER reduces distance computations during \emph{search} on a fixed graph, while our work reduces distance computations during \emph{graph construction} via NN-Descent.
+In principle, both techniques could be applied simultaneously---our filter during construction and FINGER during search---to accelerate the full pipeline.

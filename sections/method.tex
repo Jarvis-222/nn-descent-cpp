@@ -1,0 +1,147 @@
+
+
+
+
+
+
+%% =====================================================================
+\section{Complexity Analysis}
+\label{sec:analysis}
+
+In this section, we analyze the time and space complexity of the projection-based filter, characterize its interaction with the NN-Descent algorithm, and derive the conditions under which filtering yields a net computational benefit.
+
+\subsection{Preprocessing Cost}
+\label{sec:preprocessing}
+
+The one-time preprocessing phase consists of two steps:
+
+\paragraph{Projection vector generation.}
+Generating $m$ random Gaussian vectors of dimension $d$ costs $O(m \cdot d)$.
+This is negligible relative to the projection step.
+
+\paragraph{Data projection.}
+Computing the projections $P(x_i) \in \mathbb{R}^m$ for all $n$ data points requires $n \times m$ inner products, each of cost $O(d)$, yielding a total preprocessing cost of:
+\begin{equation}
+    T_{\text{preprocess}} = O(n \cdot m \cdot d)
+    \label{eq:preprocess}
+\end{equation}
+For our experimental setting ($n = 10^6$, $m = 32$, $d = 960$), this amounts to approximately $3 \times 10^{10}$ floating-point operations.
+In practice, this step takes a few seconds and is amortized over all subsequent iterations.
+
+\subsection{Per-Iteration Cost With Filtering}
+\label{sec:per_iteration}
+
+In standard NN-Descent, each iteration generates $C$ candidate pairs and computes an exact distance for each, at a cost of $O(C \cdot d)$ per iteration.
+With projection-based filtering, the per-iteration cost becomes:
+\begin{equation}
+    T_{\text{iter}} = \underbrace{C \cdot O(m)}_{\text{filter check (all pairs)}} + \underbrace{(1 - f) \cdot C \cdot O(d)}_{\text{distance computation (surviving pairs)}}
+    \label{eq:iter_cost}
+\end{equation}
+where $f \in [0, 1]$ is the \emph{filter rate}---the fraction of candidate pairs that are filtered (skipped) per iteration.
+Rearranging, the cost ratio relative to unfiltered NN-Descent is:
+\begin{equation}
+    \frac{T_{\text{filtered}}}{T_{\text{unfiltered}}} = \frac{m}{d} + (1 - f) = 1 - f + \frac{m}{d}
+    \label{eq:cost_ratio}
+\end{equation}
+
+\subsection{Break-Even Condition}
+\label{sec:breakeven}
+
+Filtering provides a net speedup when $T_{\text{filtered}} < T_{\text{unfiltered}}$, i.e., when:
+\begin{equation}
+    1 - f + \frac{m}{d} < 1 \quad \Longrightarrow \quad f > \frac{m}{d}
+    \label{eq:breakeven}
+\end{equation}
+This gives a clean criterion: \textbf{the filter rate must exceed the ratio of projection dimensionality to data dimensionality}.
+
+\begin{itemize}
+    \item \textbf{GIST ($d = 960$, $m = 32$):} Break-even at $f > 3.3\%$. Our observed filter rates range from 15--25\% (Table~\ref{tab:gist1m_results}), well above the threshold.
+    \item \textbf{SIFT ($d = 128$, $m = 32$):} Break-even at $f > 25\%$. The observed filter rates are comparable but the margin is thin, explaining the marginal speedup on this dataset.
+\end{itemize}
+
+This analysis also explains \emph{why} the filter is most beneficial for high-dimensional data: as $d$ grows, the break-even threshold $m/d$ decreases, making even modest filter rates profitable.
+
+\subsection{Memory Overhead}
+\label{sec:memory}
+
+The filter requires storing the precomputed projections for all $n$ points:
+\begin{equation}
+    M_{\text{proj}} = n \cdot m \cdot \text{sizeof(float)} = n \cdot m \cdot 4 \;\text{bytes}
+    \label{eq:memory}
+\end{equation}
+For $n = 10^6$ and $m = 32$, this amounts to 128~MB.
+For comparison, the original dataset occupies $n \cdot d \cdot 4 = 3{,}840$~MB for GIST~1M.
+The projection storage is therefore approximately $m / d = 3.3\%$ of the dataset size---a modest overhead.
+
+Additionally, the filter requires $O(m \cdot d)$ storage for the $m$ projection vectors themselves, which is negligible.
+
+\subsection{Adaptive Filter Behavior}
+\label{sec:adaptive}
+
+An important property of the projection-based filter is that it is \emph{self-adaptive} across iterations without any explicit parameter adjustment.
+The filter condition (Equation~\ref{eq:proj_filter}) depends on $d_k(u)$---the distance to each point's current farthest neighbor---which \emph{decreases} as the graph improves.
+As $d_k(u)$ shrinks, the threshold $t^2 \cdot d_k(u)^2$ tightens, making the filter condition easier to satisfy and thus filtering more aggressively.
+
+This behavior is desirable: in early iterations, when the graph is still rough and many candidate pairs could yield improvements, the filter is lenient.
+In later iterations, when the graph has largely converged and most candidate pairs are wasteful (as shown in Figure~\ref{fig:waste}), the filter becomes stricter and skips more pairs.
+The filter thus naturally tracks the convergence of the algorithm, applying more aggressive filtering precisely when it is most needed.
+
+\subsection{False Negative Probability}
+\label{sec:false_negative}
+
+The filter may incorrectly skip a pair $(u_1, u_2)$ whose true distance would improve the graph---a false negative.
+By the concentration bound (Equation~\ref{eq:concentration}), the probability that the projected distance of a true neighbor exceeds the threshold from a \emph{single} endpoint's perspective is at most $1 - p_\tau$.
+Since we require both endpoints to agree (AND condition), the probability of a false negative for a pair that is a true neighbor of \emph{both} endpoints is at most:
+\begin{equation}
+    P_{\text{false negative}} \leq (1 - p_\tau)^2
+    \label{eq:fn_prob}
+\end{equation}
+
+\begin{table}[t]
+\centering
+\caption{False negative probability bounds for different confidence levels.}
+\label{tab:fn_prob}
+\begin{tabular}{ccc}
+\toprule
+$p_\tau$ & $1 - p_\tau$ & $(1 - p_\tau)^2$ \\
+\midrule
+0.99 & 1.00\% & 0.01\% \\
+0.95 & 5.00\% & 0.25\% \\
+0.90 & 10.0\% & 1.00\% \\
+0.85 & 15.0\% & 2.25\% \\
+0.80 & 20.0\% & 4.00\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:fn_prob} summarizes these bounds.
+Note that these are \emph{worst-case} bounds---the actual false negative rate in practice depends on the distribution of projected distances and is often lower than the theoretical bound.
+Furthermore, a false negative in one iteration does not necessarily result in a permanent recall loss: the same pair may be regenerated as a candidate in a subsequent iteration, at which point the tighter $d_k$ threshold may allow it to pass the filter.
+
+\subsection{Comparison of Filtering Approaches}
+\label{sec:filter_comparison}
+
+Table~\ref{tab:filter_comparison} summarizes the key differences between the two filtering strategies.
+
+\begin{table}[t]
+\centering
+\caption{Comparison of collision-count and projection-based filtering.}
+\label{tab:filter_comparison}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Property} & \textbf{Collision} & \textbf{Projection} \\
+\midrule
+Signal type & Discrete (bits) & Continuous ($\mathbb{R}^m$) \\
+Per-pair cost & $O(1)$ & $O(m)$ \\
+Theoretical guarantee & None & Chi-squared bound \\
+Threshold & Heuristic ($\mu$) & Derived ($\chi^2_{p_\tau}$) \\
+Adaptive to convergence & Indirect & Direct via $d_k(u)$ \\
+Preprocessing & $O(n \cdot H)$ & $O(n \cdot m \cdot d)$ \\
+Memory & $O(n)$ (128 bits each) & $O(n \cdot m)$ \\
+Sensitivity to $d$ & Low & Favorable for large $d$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The collision-count filter has the advantage of a lower per-pair cost ($O(1)$ vs.\ $O(m)$), but this advantage is outweighed by the projection filter's theoretically grounded threshold, continuous distance signal, and natural adaptivity to graph convergence.
+The experimental comparison in Section~\ref{sec:experiments} confirms that the projection-based filter delivers substantially better results in practice.

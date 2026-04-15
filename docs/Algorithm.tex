@@ -1,0 +1,154 @@
+\section{Filtering Distance Computations in NN-Descent}
+\label{sec:method}
+
+As discussed in the previous section, at the core of NN-Descent lies the intuition that \emph{a neighbor of a neighbor could possibly be a neighbor}.With every iteration, the algorithm examines candidate pairs drawn from each vertex's neighbor list, computes their exact distances, and updates the graph when an improvement is found.
+As the graph quality improves over successive iterations, fewer candidate pairs actually lead to graph updates, yet the algorithm continues to evaluate them, resulting in a massive number of wasted distance computations. This is likely a direct consequence of the algorithm's own success: as the graph converges toward the true $k$-NN graph, the pool of candidate pairs that can still yield improvements shrinks, but the cost of evaluating them remains $O(d)$ per pair.
+
+
+In their original paper, Dong et al.~\cite{dong2011} introduced several optimization techniques for NN-Descent, such as \textbf{local joins} for cache efficiency, \textbf{new/old} tagging to skip redundant pairs, and also suggested possibility of using \textbf{Bloom filters} for global de-duplication. Even with these modifications, the high volume of distance computations remains the primary bottleneck, because the vast majority of these computations do not result in graph updates. 
+
+\subsection{The Waste Problem}
+\label{sec:waste}
+
+To quantify this bottleneck, we ran the NN-Descent algorithm on the GIST~1M dataset ($n = 10^6$, $d = 960$, $k = 10$) and analyzed the per-iteration statistics.
+Figure~\ref{fig:waste} presents two views of the computational waste.
+
+With random initialization, the algorithm performed a total of 1,375M distance computations across 18 iterations, out of which approximately 93\% were wasted and did not cause any graph updates.
+Here, the update count has been considered for both neighbor's list of each pair, that is, a single distance computation is credited with up to two updates when it improves the neighbor lists of \emph{both} endpoints, thus making this number a generous estimate.
+
+Even with RP-Tree initialization~\cite{pynndescent}, the numbers are arguably worse: although it reduces the total distance computations to 1,102M (approximately 275M fewer) and achieves roughly 10 percentage points better construction recall (0.647 vs.\ 0.549) and taking about 120 seconds less time, the waste fraction rises to 98.5\%.
+The RP-Trees are used for initialization as they provides a better initial graph that already starts at around 30\% recall, whereas random initialization assigns random nodes as each point's neighbors and starts with nearly 0\% recall, requiring more iterations as well as more construction time.
+Consequently, by the time RP-Tree iterations begin, most of the ``easy'' neighbor discoveries have already been made during initialization, leaving fewer opportunities for improvement and thus a higher proportion of wasted distance computations per iteration making the our proposed approaches even utilizable for PyNNDescent as well. 
+
+As the right panel of Figure~\ref{fig:waste} shows, both initialization strategies exhibit severe diminishing returns: the recall curve flattens while distance computations continue to accumulate.
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\linewidth]{plots/gist1m_distcomps_vs_updates.png}
+    \caption{Computational waste in NN-Descent on GIST~1M ($d=960$) without filtering.
+    \textbf{Left:} Fraction of distance computations per iteration that do not produce a graph update.
+    Both Random and RP-Tree initialization waste over 80\% of computations from the very first iteration, exceeding 98\% in later iterations.
+    \textbf{Right:} Recall vs.\ cumulative distance computations (iteration phase only, excluding initialization cost).
+    The flattening curves indicate diminishing returns---hundreds of millions of additional distance computations yield negligible recall improvement.}
+    \label{fig:waste}
+\end{figure*}
+
+This analysis motivates a filtering approach: if we can cheaply identify candidate pairs that are unlikely to produce graph updates and skip their expensive $O(d)$ distance computation, we can significantly reduce the construction cost without substantially affecting graph quality.
+Our filter is inserted into the local-join loop \emph{before} the exact distance computation.
+
+
+\subsection{Projection-Based Distance Filtering}
+\label{sec:projection}
+
+We use a continuous projected-distance estimate grounded in the concentration properties of random projections.
+Inspired by the filtering technique used in LSH-APG~\cite{zhao2023} for proximity graph construction, we adapt it specifically to the local-join structure of NN-Descent.
+
+
+\subsubsection{Threshold Computation}
+
+We define the filter threshold:
+\begin{equation}
+    t^2 = \chi^2_{p_\tau}(m)
+    \label{eq:threshold}
+\end{equation}
+
+To avoid expensive CDF evaluations at runtime, we compute $\chi^2_{p_\tau}(m)$ using the Wilson--Hilferty approximation~\cite{wilson1931distribution}:
+\begin{equation}
+    \chi^2_{p_\tau}(m) \approx m \left(1 - \frac{2}{9m} + z_{p_\tau} \sqrt{\frac{2}{9m}}\right)^{\!3}
+    \label{eq:wilson_hilferty}
+\end{equation}
+where $z_{p_\tau}$ is the $p_\tau$-quantile of the standard normal distribution, itself approximated via the rational formula of Abramowitz and Stegun~\cite{abramowitz1964handbook}.
+This computation is performed once during initialization and has negligible cost.
+
+\subsubsection{Filter Condition}
+
+Let $d_k(u)$ denote the distance from point $u$ to its current $k$-th nearest neighbor (i.e., the farthest point in $u$'s neighbor list).
+A candidate pair $(u_1, u_2)$ can only update the graph if the true distance $\|u_1 - u_2\|_2$ is smaller than $d_k(u_1)$ or $d_k(u_2)$.
+
+Using the concentration bound from Equation~\eqref{eq:concentration}, if the true distance were at most $d_k(u)$, then with probability at least $p_\tau$:
+\begin{equation}
+    \|P(u_1) - P(u_2)\|^2 \leq t^2 \cdot d_k(u)^2
+\end{equation}
+Contrapositively, if the projected distance exceeds this bound, we can conclude with confidence $p_\tau$ that the true distance is greater than $d_k(u)$.
+
+The complete filter condition is:
+\begin{equation}
+\begin{aligned}
+    &\|P(u_1) - P(u_2)\|^2 > t^2 \cdot d_k(u_1)^2 \\
+    &\quad\textbf{AND}\quad \|P(u_1) - P(u_2)\|^2 > t^2 \cdot d_k(u_2)^2
+\end{aligned}
+\label{eq:proj_filter}
+\end{equation}
+
+We apply the conjunctive (AND) condition: a pair is only skipped when \emph{both} endpoints independently indicate that the pair is too far.
+This makes the filter conservative---the probability of incorrectly filtering a true neighbor is at most $(1 - p_\tau)^2$, which for $p_\tau = 0.95$ is only $0.25\%$.
+
+\subsubsection{\textbf{Per-Pair Cost and the Dimensionality Advantage}}
+
+The filter check computes the squared $L_2$ distance between two $m$-dimensional projection vectors, costing $O(m)$ operations.
+The key insight is that $m \ll d$ in high-dimensional settings---with $m = 32$ projections on $d = 960$ dimensional data (GIST), the filter check is approximately $30\times$ cheaper than the exact distance computation.
+This gap is what makes the filter effective: even if only a fraction of pairs are filtered, the savings on those pairs far outweigh the overhead of checking all pairs.
+
+Conversely, when $d$ is small (e.g., $d = 128$ for SIFT), the ratio $d / m$ shrinks, and the filter overhead approaches the cost of the distance computation itself.
+This naturally limits the filter's applicability to settings where it is most needed : \textbf{high-dimensional} data where distance computations are expensive.
+
+
+\subsection{\textbf{Integration into NN-Descent}}
+\label{sec:integration}
+
+The filter integrates into the NN-Descent algorithm \textbf{inside the local-join loop}, \emph{after} candidate pair generation but \emph{before} the exact distance computation.
+Algorithm~\ref{alg:filtered_nndescent} presents the modified local-join procedure with the projection-based filter.
+
+\begin{algorithm}[t]
+\caption{Filtered NN-Descent (projection-based)}
+\label{alg:filtered_nndescent}
+\begin{algorithmic}
+\small
+\Require Data $X = \{x_1, \ldots, x_n\} \subset \mathbb{R}^d$; neighbors $k$; projections $m$; confidence $p_\tau$; sampling rate $\rho$; convergence tol.\ $\delta$
+\Ensure Approximate $k$-NN graph $G$
+\State \textbf{// Preprocessing}
+\State Sample $\mathbf{a}_1,\ldots,\mathbf{a}_m \sim \mathcal{N}(0, I_d)$
+\ForAll{$i \in \{1,\ldots,n\}$}
+    \State $P(x_i) \gets (\mathbf{a}_1 \!\cdot\! x_i, \ldots, \mathbf{a}_m \!\cdot\! x_i)$
+\EndFor
+\State $t^2 \gets \chi^2_{p_\tau}(m)$ \Comment{Wilson--Hilferty}
+\State \textbf{// Initialization}
+\State $G \gets$ random or RP-tree $k$-NN graph on $X$
+\State Mark all neighbors in $G$ as \textsc{New}
+\State \textbf{// Main refinement loop}
+\Repeat
+    \State $c \gets 0$
+    \ForAll{$u \in \{1,\ldots,n\}$}
+        \State $\mathcal{N}_u \gets$ sample $\rho k$ from \textsc{New}$(u)$
+        \State $\mathcal{O}_u \gets$ sample $\rho k$ from \textsc{Old}$(u)$
+        \State mark sampled \textsc{New} entries as \textsc{Old}
+    \EndFor
+    \State $\mathcal{R} \gets$ reverse-neighbor lists of $\mathcal{N}, \mathcal{O}$
+    \ForAll{$u \in \{1,\ldots,n\}$}
+        \State $\mathcal{N}'_u \gets \mathcal{N}_u \cup \text{sample}(\mathcal{R}_{\mathcal{N}}(u), \rho k)$
+        \State $\mathcal{O}'_u \gets \mathcal{O}_u \cup \text{sample}(\mathcal{R}_{\mathcal{O}}(u), \rho k)$
+        \ForAll{$(u_1, u_2) \in (\mathcal{N}'_u \!\times\! \mathcal{N}'_u) \cup (\mathcal{N}'_u \!\times\! \mathcal{O}'_u)$}
+            \If{$u_1 = u_2$} \textbf{continue} \EndIf
+            \State $d_k^{(1)}, d_k^{(2)} \gets$ farthest-neighbor dists.\ in $G$
+            \State $\delta_P \gets \|P(x_{u_1}) - P(x_{u_2})\|^2$
+            \If{$\delta_P > t^2 (d_k^{(1)})^2$ \textbf{and} $\delta_P > t^2 (d_k^{(2)})^2$}
+                \State \textbf{continue} \Comment{filtered out}
+            \EndIf
+            \State $d \gets \|x_{u_1} - x_{u_2}\|_2$
+            \If{$d < d_k^{(1)}$} update $N_G(u_1)$; $c \gets c+1$ \EndIf
+            \If{$d < d_k^{(2)}$} update $N_G(u_2)$; $c \gets c+1$ \EndIf
+        \EndFor
+    \EndFor
+\Until{$c < \delta \cdot n \cdot k$}
+\State \Return $G$
+\end{algorithmic}
+\end{algorithm}
+
+The filter has two tunable parameters:
+\begin{itemize}
+    \item \textbf{Number of projections $m$:} Controls the quality of the distance estimate. Larger $m$ gives tighter concentration but increases the per-pair filter cost. We use $m = 32$ throughout our experiments.
+    \item \textbf{Confidence level $p_\tau$:} Controls the trade-off between filtering aggressiveness and recall preservation. Higher $p_\tau$ (e.g., 0.99) filters fewer pairs but preserves more recall; lower $p_\tau$ (e.g., 0.80) filters aggressively at the cost of some recall loss.
+\end{itemize}
+
+The experiments and the results are discussed in the next section. 
+

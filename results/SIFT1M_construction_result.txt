@@ -1,0 +1,817 @@
+=== SIFT 1M graph construction sweep ===
+repo=/home/j2pandya/nn-descent/nn-descent-cpp
+data=/home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs
+gt=/home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin
+k=10 mc=40 projections=32
+
+============================================================
+[sift1m] init=random config=nofilter
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_nofilter_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_nofilter.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=OFF
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[init] Random
+[init] Done. dist_comps=10000000 time=3.31728s
+[iter 1] updates=36267974 dist=195006939 filtered=0 rate=0% cumul=205006939 recall=0.0004031 join=24.0224s time=26.0347s
+[iter 2] updates=19097120 dist=216571860 filtered=0 rate=0% cumul=421578799 recall=0.0041932 join=24.4624s time=26.347s
+[iter 3] updates=15799585 dist=215657440 filtered=0 rate=0% cumul=637236239 recall=0.0296478 join=24.5241s time=26.3383s
+[iter 4] updates=13247259 dist=215257574 filtered=0 rate=0% cumul=852493813 recall=0.143433 join=24.4204s time=26.2362s
+[iter 5] updates=10041997 dist=217391035 filtered=0 rate=0% cumul=1069884848 recall=0.390627 join=24.4803s time=26.2852s
+[iter 6] updates=5827547 dist=209775928 filtered=0 rate=0% cumul=1279660776 recall=0.637204 join=23.5088s time=25.2817s
+[iter 7] updates=2470834 dist=143273958 filtered=0 rate=0% cumul=1422934734 recall=0.771676 join=16.7589s time=18.5402s
+[iter 8] updates=916540 dist=68217371 filtered=0 rate=0% cumul=1491152105 recall=0.82782 join=9.33333s time=11.0207s
+[iter 9] updates=339051 dist=27413474 filtered=0 rate=0% cumul=1518565579 recall=0.849552 join=4.61134s time=6.24888s
+[iter 10] updates=132360 dist=10591870 filtered=0 rate=0% cumul=1529157449 recall=0.858143 join=2.09579s time=3.68124s
+[iter 11] updates=54748 dist=4215035 filtered=0 rate=0% cumul=1533372484 recall=0.861685 join=0.938624s time=2.51603s
+[iter 12] updates=23147 dist=1750974 filtered=0 rate=0% cumul=1535123458 recall=0.863186 join=0.414445s time=2.00162s
+[iter 13] updates=10029 dist=741043 filtered=0 rate=0% cumul=1535864501 recall=0.863829 join=0.183258s time=1.75344s
+[iter 14] updates=4231 dist=319009 filtered=0 rate=0% cumul=1536183510 recall=0.864099 join=0.0812578s time=1.65515s
+[converged] updates=4231 < threshold=10000
+
+[final] Recall = 0.864099
+[final] Total dist_comps = 1536183510
+[final] Total time = 210.413s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_nofilter_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_nofilter.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.99
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt099_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt099.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.99 χ²=53.5121 t=7.3152
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.33762s
+[iter 1] updates=36233381 dist=98902258 filtered=96104681 rate=49.2827% cumul=108902258 recall=0.0004031 join=22.8749s time=24.8715s
+[iter 2] updates=19074202 dist=182563721 filtered=34005427 rate=15.7019% cumul=291465979 recall=0.004197 join=27.6498s time=29.5293s
+[iter 3] updates=15779929 dist=179639407 filtered=36026184 rate=16.7047% cumul=471105386 recall=0.0296471 join=27.7203s time=29.5372s
+[iter 4] updates=13233696 dist=178913387 filtered=36338528 rate=16.8819% cumul=650018773 recall=0.143375 join=27.6854s time=29.5147s
+[iter 5] updates=10030692 dist=182592352 filtered=34808739 rate=16.0113% cumul=832611125 recall=0.390325 join=27.8702s time=29.6666s
+[iter 6] updates=5820721 dist=179549680 filtered=30205364 rate=14.4003% cumul=1012160805 recall=0.636585 join=26.874s time=28.6439s
+[iter 7] updates=2470806 dist=123984220 filtered=19200984 rate=13.4099% cumul=1136145025 recall=0.771117 join=19.1665s time=20.9324s
+[iter 8] updates=915092 dist=59016961 filtered=9222183 rate=13.5145% cumul=1195161986 recall=0.827251 join=10.6718s time=12.3843s
+[iter 9] updates=340163 dist=23527423 filtered=3849492 rate=14.0611% cumul=1218689409 recall=0.849067 join=5.2807s time=6.90148s
+[iter 10] updates=132340 dist=9081068 filtered=1541618 rate=14.5125% cumul=1227770477 recall=0.857651 join=2.42879s time=4.04026s
+[iter 11] updates=54444 dist=3588127 filtered=621046 rate=14.7546% cumul=1231358604 recall=0.861166 join=1.06806s time=2.66857s
+[iter 12] updates=22991 dist=1486661 filtered=258633 rate=14.8189% cumul=1232845265 recall=0.862658 join=0.476711s time=2.05945s
+[iter 13] updates=9982 dist=625555 filtered=109254 rate=14.8684% cumul=1233470820 recall=0.863297 join=0.204466s time=1.79013s
+[converged] updates=9982 < threshold=10000
+
+[final] Recall = 0.863297
+[final] Total dist_comps = 1233470820
+[final] Total time = 230.949s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt099_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt099.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.95
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt095_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt095.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.95 χ²=46.1919 t=6.79646
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.31738s
+[iter 1] updates=36033162 dist=81245275 filtered=113761664 rate=58.3372% cumul=91245275 recall=0.0004031 join=21.5521s time=23.5421s
+[iter 2] updates=18939614 dist=155078405 filtered=61471697 rate=28.3868% cumul=246323680 recall=0.0041889 join=25.8966s time=27.789s
+[iter 3] updates=15665749 dist=150835339 filtered=64821817 rate=30.0578% cumul=397159019 recall=0.0295741 join=25.7981s time=27.6268s
+[iter 4] updates=13138011 dist=149842189 filtered=65426735 rate=30.393% cumul=547001208 recall=0.142846 join=25.7404s time=27.6044s
+[iter 5] updates=9965156 dist=153669946 filtered=63642332 rate=29.2861% cumul=700671154 recall=0.388654 join=25.9396s time=27.73s
+[iter 6] updates=5791381 dist=152939887 filtered=56574242 rate=27.0026% cumul=853611041 recall=0.633796 join=25.1343s time=26.9136s
+[iter 7] updates=2458790 dist=106545276 filtered=36492335 rate=25.5124% cumul=960156317 recall=0.767426 join=18.0733s time=19.8566s
+[iter 8] updates=912139 dist=50582522 filtered=17493445 rate=25.6969% cumul=1010738839 recall=0.82301 join=10.1617s time=11.8633s
+[iter 9] updates=339625 dist=20073317 filtered=7263466 rate=26.5703% cumul=1030812156 recall=0.844688 join=5.07357s time=6.71104s
+[iter 10] updates=132692 dist=7719816 filtered=2901726 rate=27.3193% cumul=1038531972 recall=0.853279 join=2.31384s time=3.92078s
+[iter 11] updates=54162 dist=3055544 filtered=1164181 rate=27.589% cumul=1041587516 recall=0.85676 join=1.01586s time=2.60428s
+[iter 12] updates=23004 dist=1255590 filtered=482305 rate=27.7523% cumul=1042843106 recall=0.85824 join=0.442161s time=2.04705s
+[iter 13] updates=9841 dist=534614 filtered=205061 rate=27.7231% cumul=1043377720 recall=0.858868 join=0.196502s time=1.77971s
+[converged] updates=9841 < threshold=10000
+
+[final] Recall = 0.858868
+[final] Total dist_comps = 1043377720
+[final] Total time = 218.365s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt095_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt095.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.90
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt090_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt090.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.9 χ²=42.5765 t=6.52506
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.35526s
+[iter 1] updates=35727672 dist=71386417 filtered=123620522 rate=63.3929% cumul=81386417 recall=0.0004031 join=20.7565s time=22.7773s
+[iter 2] updates=18737437 dist=136934146 filtered=79578717 rate=36.7547% cumul=218320563 recall=0.004171 join=24.4693s time=26.3835s
+[iter 3] updates=15490244 dist=132145350 filtered=83479959 rate=38.7153% cumul=350465913 recall=0.0294351 join=24.304s time=26.1394s
+[iter 4] updates=12997775 dist=131046426 filtered=84153927 rate=39.1049% cumul=481512339 recall=0.141946 join=24.2225s time=26.0651s
+[iter 5] updates=9866382 dist=134908126 filtered=82264740 rate=37.8798% cumul=616420465 recall=0.385587 join=24.4548s time=26.2693s
+[iter 6] updates=5742788 dist=135297347 filtered=73771723 rate=35.2858% cumul=751717812 recall=0.628046 join=23.7255s time=25.5652s
+[iter 7] updates=2449383 dist=94833703 filtered=47829238 rate=33.526% cumul=846551515 recall=0.760391 join=17.1671s time=18.9624s
+[iter 8] updates=913486 dist=45121436 filtered=22891385 rate=33.6575% cumul=891672951 recall=0.815657 join=9.70902s time=11.4536s
+[iter 9] updates=341410 dist=17909224 filtered=9481946 rate=34.6168% cumul=909582175 recall=0.837246 join=4.88559s time=6.53542s
+[iter 10] updates=132838 dist=6884357 filtered=3784770 rate=35.474% cumul=916466532 recall=0.845739 join=2.23098s time=3.84094s
+[iter 11] updates=54101 dist=2709383 filtered=1521651 rate=35.964% cumul=919175915 recall=0.849209 join=0.983103s time=2.61017s
+[iter 12] updates=23024 dist=1110594 filtered=623759 rate=35.9649% cumul=920286509 recall=0.850687 join=0.426177s time=2.03956s
+[iter 13] updates=9972 dist=472769 filtered=264676 rate=35.8909% cumul=920759278 recall=0.851321 join=0.187397s time=1.82796s
+[converged] updates=9972 < threshold=10000
+
+[final] Recall = 0.851321
+[final] Total dist_comps = 920759278
+[final] Total time = 208.896s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt090_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt090.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.85
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt085_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt085.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.85 χ²=40.2464 t=6.34401
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.37178s
+[iter 1] updates=35379488 dist=64667625 filtered=130339314 rate=66.8383% cumul=74667625 recall=0.0004031 join=20.1095s time=22.1272s
+[iter 2] updates=18508596 dist=123881590 filtered=92590318 rate=42.7724% cumul=198549215 recall=0.0041636 join=23.3856s time=25.2867s
+[iter 3] updates=15294385 dist=118890017 filtered=96731097 rate=44.8616% cumul=317439232 recall=0.0292366 join=23.1216s time=24.941s
+[iter 4] updates=12835791 dist=117762173 filtered=97328170 rate=45.2499% cumul=435201405 recall=0.140664 join=23.0025s time=24.8547s
+[iter 5] updates=9758899 dist=121555732 filtered=95418078 rate=43.9768% cumul=556757137 recall=0.381181 join=23.2625s time=25.0616s
+[iter 6] updates=5699693 dist=122710452 filtered=85978532 rate=41.1994% cumul=679467589 recall=0.620682 join=22.6581s time=24.4424s
+[iter 7] updates=2444941 dist=86540400 filtered=55877235 rate=39.2348% cumul=766007989 recall=0.751754 join=16.4872s time=18.2574s
+[iter 8] updates=917786 dist=41383251 filtered=26781381 rate=39.2893% cumul=807391240 recall=0.80685 join=9.41027s time=11.0919s
+[iter 9] updates=342117 dist=16458297 filtered=11105389 rate=40.2899% cumul=823849537 recall=0.828334 join=4.76199s time=6.40764s
+[iter 10] updates=133606 dist=6310252 filtered=4413015 rate=41.1536% cumul=830159789 recall=0.836835 join=2.16658s time=3.79983s
+[iter 11] updates=54477 dist=2492289 filtered=1773089 rate=41.5693% cumul=832652078 recall=0.84027 join=0.954105s time=2.53393s
+[iter 12] updates=22720 dist=1017529 filtered=730317 rate=41.7838% cumul=833669607 recall=0.841678 join=0.41417s time=2.01677s
+[iter 13] updates=9897 dist=421127 filtered=303960 rate=41.9205% cumul=834090734 recall=0.842293 join=0.179039s time=1.77065s
+[converged] updates=9897 < threshold=10000
+
+[final] Recall = 0.842293
+[final] Total dist_comps = 834090734
+[final] Total time = 201.029s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt085_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt085.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.80
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt080_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt080.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.8 χ²=38.4562 t=6.20131
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.3105s
+[iter 1] updates=34994576 dist=59363932 filtered=135643007 rate=69.558% cumul=69363932 recall=0.0004031 join=19.5666s time=21.5624s
+[iter 2] updates=18254534 dist=113340867 filtered=103074538 rate=47.6281% cumul=182704799 recall=0.0041458 join=22.4321s time=24.3309s
+[iter 3] updates=15082091 dist=108301547 filtered=107281645 rate=49.7635% cumul=291006346 recall=0.029011 join=22.1836s time=24.0107s
+[iter 4] updates=12668198 dist=107203135 filtered=107829950 rate=50.1457% cumul=398209481 recall=0.139313 join=22.1115s time=23.9467s
+[iter 5] updates=9643176 dist=110933812 filtered=105838637 rate=48.8248% cumul=509143293 recall=0.376751 join=22.3279s time=24.1834s
+[iter 6] updates=5650266 dist=112539295 filtered=95657309 rate=45.9457% cumul=621682588 recall=0.6129 join=21.7095s time=23.5386s
+[iter 7] updates=2433879 dist=79813756 filtered=62254647 rate=43.8202% cumul=701496344 recall=0.742093 join=15.9385s time=17.7142s
+[iter 8] updates=915942 dist=38230551 filtered=29790837 rate=43.7963% cumul=739726895 recall=0.796387 join=9.12038s time=10.8654s
+[iter 9] updates=343781 dist=15226309 filtered=12327843 rate=44.7404% cumul=754953204 recall=0.817702 join=4.63727s time=6.28858s
+[iter 10] updates=134488 dist=5855198 filtered=4910984 rate=45.6149% cumul=760808402 recall=0.826093 join=2.11568s time=3.73527s
+[iter 11] updates=55307 dist=2309562 filtered=1970433 rate=46.0382% cumul=763117964 recall=0.829532 join=0.936607s time=2.55335s
+[iter 12] updates=23127 dist=949838 filtered=822336 rate=46.4027% cumul=764067802 recall=0.830967 join=0.411702s time=2.02476s
+[iter 13] updates=9609 dist=399457 filtered=342738 rate=46.179% cumul=764467259 recall=0.831549 join=0.177288s time=1.79052s
+[converged] updates=9609 < threshold=10000
+
+[final] Recall = 0.831549
+[final] Total dist_comps = 764467259
+[final] Total time = 194.899s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt080_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt080.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.75
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt075_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt075.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.75 χ²=36.9634 t=6.07975
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.36189s
+[iter 1] updates=34574575 dist=54885615 filtered=140121324 rate=71.8545% cumul=64885615 recall=0.0004031 join=19.1644s time=21.1854s
+[iter 2] updates=17979465 dist=104333818 filtered=112016889 rate=51.7756% cumul=169219433 recall=0.0041228 join=21.6554s time=23.5428s
+[iter 3] updates=14855919 dist=99330896 filtered=116205646 rate=53.9146% cumul=268550329 recall=0.0287464 join=21.418s time=23.2574s
+[iter 4] updates=12480860 dist=98310627 filtered=116603059 rate=54.2558% cumul=366860956 recall=0.137448 join=21.31s time=23.1593s
+[iter 5] updates=9519685 dist=101948224 filtered=114555433 rate=52.9115% cumul=468809180 recall=0.370941 join=21.5051s time=23.3082s
+[iter 6] updates=5602008 dist=103915500 filtered=103724422 rate=49.954% cumul=572724680 recall=0.602901 join=21.0039s time=22.8198s
+[iter 7] updates=2432171 dist=74156204 filtered=67671406 rate=47.7138% cumul=646880884 recall=0.730564 join=15.4653s time=17.2627s
+[iter 8] updates=921361 dist=35782079 filtered=32469869 rate=47.5735% cumul=682662963 recall=0.784446 join=8.94327s time=10.6619s
+[iter 9] updates=345840 dist=14290075 filtered=13444701 rate=48.476% cumul=696953038 recall=0.805505 join=4.56671s time=6.19662s
+[iter 10] updates=134548 dist=5481425 filtered=5341615 rate=49.3541% cumul=702434463 recall=0.813778 join=2.06813s time=3.68541s
+[iter 11] updates=54947 dist=2153446 filtered=2135615 rate=49.7921% cumul=704587909 recall=0.817162 join=0.911881s time=2.51676s
+[iter 12] updates=22848 dist=883525 filtered=882120 rate=49.9602% cumul=705471434 recall=0.818562 join=0.398686s time=2.01306s
+[iter 13] updates=9687 dist=369193 filtered=366801 rate=49.8375% cumul=705840627 recall=0.81916 join=0.17238s time=1.80814s
+[converged] updates=9687 < threshold=10000
+
+[final] Recall = 0.81916
+[final] Total dist_comps = 705840627
+[final] Total time = 189.843s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt075_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt075.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.70
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt070_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt070.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.7 χ²=35.6564 t=5.9713
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.35502s
+[iter 1] updates=34117020 dist=50950792 filtered=144056147 rate=73.8723% cumul=60950792 recall=0.0004031 join=18.7565s time=20.7692s
+[iter 2] updates=17682630 dist=96390061 filtered=119889735 rate=55.4327% cumul=157340853 recall=0.0041079 join=20.903s time=22.7886s
+[iter 3] updates=14613501 dist=91519884 filtered=123983110 rate=57.532% cumul=248860737 recall=0.0284509 join=20.6404s time=22.4773s
+[iter 4] updates=12289720 dist=90542300 filtered=124273756 rate=57.8512% cumul=339403037 recall=0.135596 join=20.5645s time=22.4111s
+[iter 5] updates=9390258 dist=94093835 filtered=122148541 rate=56.4869% cumul=433496872 recall=0.36499 join=20.7445s time=22.5808s
+[iter 6] updates=5551834 dist=96324636 filtered=110761745 rate=53.4858% cumul=529821508 recall=0.592842 join=20.2866s time=22.0772s
+[iter 7] updates=2421619 dist=69173653 filtered=72409965 rate=51.1429% cumul=598995161 recall=0.718468 join=15.0181s time=16.8013s
+[iter 8] updates=922377 dist=33482669 filtered=34711567 rate=50.901% cumul=632477830 recall=0.771702 join=8.70472s time=10.4035s
+[iter 9] updates=348365 dist=13415205 filtered=14416640 rate=51.7991% cumul=645893035 recall=0.792634 join=4.4545s time=6.10014s
+[iter 10] updates=137175 dist=5178303 filtered=5739859 rate=52.5717% cumul=651071338 recall=0.800928 join=2.02106s time=3.62478s
+[iter 11] updates=56300 dist=2050887 filtered=2319706 rate=53.0753% cumul=653122225 recall=0.804338 join=0.89507s time=2.4774s
+[iter 12] updates=23921 dist=844202 filtered=959561 rate=53.1977% cumul=653966427 recall=0.805798 join=0.394259s time=1.98373s
+[iter 13] updates=10571 dist=360527 filtered=405646 rate=52.9444% cumul=654326954 recall=0.806431 join=0.171802s time=1.75518s
+[iter 14] updates=4699 dist=159110 filtered=180408 rate=53.1365% cumul=654486064 recall=0.8067 join=0.0785882s time=1.66415s
+[converged] updates=4699 < threshold=10000
+
+[final] Recall = 0.8067
+[final] Total dist_comps = 654486064
+[final] Total time = 186.462s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt070_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt070.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.65
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt065_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt065.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.65 χ²=34.4735 t=5.87141
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.36207s
+[iter 1] updates=33624954 dist=47405148 filtered=147601791 rate=75.6905% cumul=57405148 recall=0.0004031 join=18.3129s time=20.3249s
+[iter 2] updates=17365156 dist=89229835 filtered=126958373 rate=58.7259% cumul=146634983 recall=0.0040857 join=20.1771s time=22.0825s
+[iter 3] updates=14351959 dist=84494362 filtered=130930061 rate=60.7777% cumul=231129345 recall=0.0281305 join=19.883s time=21.7168s
+[iter 4] updates=12081551 dist=83599111 filtered=131085040 rate=61.0595% cumul=314728456 recall=0.133425 join=19.8451s time=21.6879s
+[iter 5] updates=9257311 dist=87039681 filtered=128875158 rate=59.688% cumul=401768137 recall=0.358085 join=20.0663s time=21.9091s
+[iter 6] updates=5499886 dist=89489960 filtered=117009218 rate=56.6633% cumul=491258097 recall=0.581245 join=19.6546s time=21.468s
+[iter 7] updates=2416126 dist=64666573 filtered=76562562 rate=54.2116% cumul=555924670 recall=0.704901 join=14.6301s time=16.4092s
+[iter 8] updates=923952 dist=31536761 filtered=36771440 rate=53.8317% cumul=587461431 recall=0.757334 join=8.62201s time=10.3765s
+[iter 9] updates=351427 dist=12671111 filtered=15270932 rate=54.6522% cumul=600132542 recall=0.778096 join=4.3775s time=6.01503s
+[iter 10] updates=139195 dist=4920086 filtered=6119600 rate=55.4327% cumul=605052628 recall=0.786412 join=2.00219s time=3.61694s
+[iter 11] updates=57538 dist=1957756 filtered=2490499 rate=55.9882% cumul=607010384 recall=0.789841 join=0.894686s time=2.52907s
+[iter 12] updates=24311 dist=810894 filtered=1035348 rate=56.0787% cumul=607821278 recall=0.79128 join=0.397452s time=2.01933s
+[iter 13] updates=10761 dist=343752 filtered=437565 rate=56.0035% cumul=608165030 recall=0.79191 join=0.17302s time=1.78471s
+[iter 14] updates=4739 dist=154692 filtered=192135 rate=55.3979% cumul=608319722 recall=0.792181 join=0.078903s time=1.72053s
+[converged] updates=4739 < threshold=10000
+
+[final] Recall = 0.792181
+[final] Total dist_comps = 608319722
+[final] Total time = 182.229s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt065_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt065.knng
+
+Done!
+
+============================================================
+[sift1m] init=random config=0.60
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt060_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt060.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=Random
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.6 χ²=33.3761 t=5.7772
+[proj-filter] Done. Storage: 122 MB
+[init] Random
+[init] Done. dist_comps=10000000 time=5.3788s
+[iter 1] updates=33088265 dist=44144280 filtered=150862659 rate=77.3627% cumul=54144280 recall=0.0004031 join=17.9528s time=19.9483s
+[iter 2] updates=17026261 dist=82673363 filtered=133423244 rate=61.7424% cumul=136817643 recall=0.0040544 join=19.5167s time=21.4152s
+[iter 3] updates=14078154 dist=78090274 filtered=137246317 rate=63.7357% cumul=214907917 recall=0.0278235 join=19.2622s time=21.0954s
+[iter 4] updates=11860853 dist=77279060 filtered=137189344 rate=63.9672% cumul=292186977 recall=0.131051 join=19.1855s time=21.0479s
+[iter 5] updates=9105050 dist=80573639 filtered=134905550 rate=62.6072% cumul=372760616 recall=0.350619 join=19.4161s time=21.2445s
+[iter 6] updates=5439163 dist=83154715 filtered=122481785 rate=59.5623% cumul=455915331 recall=0.568805 join=19.0605s time=20.8692s
+[iter 7] updates=2406060 dist=60510085 filtered=80297725 rate=57.0265% cumul=516425416 recall=0.689819 join=14.2534s time=16.0402s
+[iter 8] updates=929126 dist=29673582 filtered=38671246 rate=56.5825% cumul=546098998 recall=0.741633 join=8.47148s time=10.1699s
+[iter 9] updates=355340 dist=12052188 filtered=16125006 rate=57.2272% cumul=558151186 recall=0.762142 join=4.31406s time=5.95868s
+[iter 10] updates=141707 dist=4687488 filtered=6479664 rate=58.0243% cumul=562838674 recall=0.770435 join=1.97522s time=3.58129s
+[iter 11] updates=58833 dist=1879165 filtered=2648581 rate=58.4967% cumul=564717839 recall=0.77386 join=0.890111s time=2.48546s
+[iter 12] updates=24922 dist=778520 filtered=1108026 rate=58.733% cumul=565496359 recall=0.775285 join=0.395139s time=1.99615s
+[iter 13] updates=11052 dist=331933 filtered=466950 rate=58.4504% cumul=565828292 recall=0.775925 join=0.173774s time=1.77222s
+[iter 14] updates=4609 dist=148557 filtered=207284 rate=58.2519% cumul=565976849 recall=0.776187 join=0.0784513s time=1.66648s
+[converged] updates=4609 < threshold=10000
+
+[final] Recall = 0.776187
+[final] Total dist_comps = 565976849
+[final] Total time = 177.868s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_random_pt060_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_random_pt060.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=nofilter
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_nofilter_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_nofilter.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=OFF
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=50.3064s
+[iter 1] updates=5602377 dist=212505911 filtered=0 rate=0% cumul=411349558 recall=0.687904 join=23.4524s time=25.2355s
+[iter 2] updates=1917170 dist=143795230 filtered=0 rate=0% cumul=555144788 recall=0.79978 join=16.6446s time=18.5678s
+[iter 3] updates=640054 dist=62834725 filtered=0 rate=0% cumul=617979513 recall=0.840722 join=8.85033s time=10.6476s
+[iter 4] updates=229996 dist=22546872 filtered=0 rate=0% cumul=640526385 recall=0.855855 join=4.07452s time=5.86145s
+[iter 5] updates=88274 dist=8255720 filtered=0 rate=0% cumul=648782105 recall=0.861683 join=1.76407s time=3.47362s
+[iter 6] updates=35102 dist=3177354 filtered=0 rate=0% cumul=651959459 recall=0.864 join=0.745794s time=2.44729s
+[iter 7] updates=14053 dist=1264039 filtered=0 rate=0% cumul=653223498 recall=0.864901 join=0.313713s time=2.00311s
+[iter 8] updates=5724 dist=503342 filtered=0 rate=0% cumul=653726840 recall=0.865271 join=0.128196s time=1.83111s
+[converged] updates=5724 < threshold=10000
+
+[final] Recall = 0.865271
+[final] Total dist_comps = 653726840
+[final] Total time = 121.938s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_nofilter_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_nofilter.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.99
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt099_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt099.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.99 χ²=53.5121 t=7.3152
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.3819s
+[iter 1] updates=5593356 dist=184783629 filtered=27722282 rate=13.0454% cumul=383627276 recall=0.687717 join=26.7972s time=28.5955s
+[iter 2] updates=1913377 dist=124275186 filtered=19434565 rate=13.5235% cumul=507902462 recall=0.799398 join=18.9745s time=20.9037s
+[iter 3] updates=638471 dist=53647746 filtered=9096047 rate=14.4971% cumul=561550208 recall=0.840233 join=10.0262s time=11.8326s
+[iter 4] updates=229200 dist=19081399 filtered=3415011 rate=15.1802% cumul=580631607 recall=0.855302 join=4.66311s time=6.43143s
+[iter 5] updates=87817 dist=6951369 filtered=1276889 rate=15.5183% cumul=587582976 recall=0.861104 join=2.00847s time=3.74222s
+[iter 6] updates=34999 dist=2671678 filtered=490987 rate=15.5245% cumul=590254654 recall=0.86341 join=0.843024s time=2.54734s
+[iter 7] updates=14065 dist=1066473 filtered=194934 rate=15.4537% cumul=591321127 recall=0.864313 join=0.3517s time=2.0945s
+[iter 8] updates=5769 dist=427106 filtered=77326 rate=15.3293% cumul=591748233 recall=0.864686 join=0.146697s time=1.87762s
+[converged] updates=5769 < threshold=10000
+
+[final] Recall = 0.864686
+[final] Total dist_comps = 591748233
+[final] Total time = 131.96s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt099_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt099.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.95
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt095_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt095.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.95 χ²=46.1919 t=6.79646
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.4143s
+[iter 1] updates=5539385 dist=159056395 filtered=53449516 rate=25.152% cumul=357900042 recall=0.686325 join=25.1617s time=26.9547s
+[iter 2] updates=1892557 dist=106252354 filtered=36895120 rate=25.7742% cumul=464152396 recall=0.796721 join=17.7814s time=19.7144s
+[iter 3] updates=630671 dist=45253131 filtered=16992567 rate=27.2992% cumul=509405527 recall=0.836928 join=9.47465s time=11.2709s
+[iter 4] updates=226567 dist=15936604 filtered=6315943 rate=28.383% cumul=525342131 recall=0.851774 join=4.39583s time=6.15057s
+[iter 5] updates=86290 dist=5791389 filtered=2349352 rate=28.8592% cumul=531133520 recall=0.857449 join=1.88732s time=3.60331s
+[iter 6] updates=34278 dist=2209146 filtered=897097 rate=28.8805% cumul=533342666 recall=0.859709 join=0.78207s time=2.51056s
+[iter 7] updates=13657 dist=879865 filtered=355318 rate=28.7664% cumul=534222531 recall=0.860586 join=0.32631s time=2.04878s
+[iter 8] updates=5596 dist=348699 filtered=139259 rate=28.5391% cumul=534571230 recall=0.860947 join=0.132371s time=1.86273s
+[converged] updates=5596 < threshold=10000
+
+[final] Recall = 0.860947
+[final] Total dist_comps = 534571230
+[final] Total time = 128.081s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt095_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt095.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.90
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt090_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt090.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.9 χ²=42.5765 t=6.52506
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.254s
+[iter 1] updates=5454623 dist=141267411 filtered=71238500 rate=33.5231% cumul=340111058 recall=0.683826 join=23.8151s time=25.6094s
+[iter 2] updates=1860584 dist=93925911 filtered=48255933 rate=33.9396% cumul=434036969 recall=0.792112 join=16.8147s time=18.7576s
+[iter 3] updates=619168 dist=39572745 filtered=21864100 rate=35.5879% cumul=473609714 recall=0.83136 join=8.97967s time=10.7788s
+[iter 4] updates=222051 dist=13831371 filtered=8058269 rate=36.8132% cumul=487441085 recall=0.845806 join=4.19745s time=5.973s
+[iter 5] updates=84364 dist=5006505 filtered=2983824 rate=37.3429% cumul=492447590 recall=0.851308 join=1.78866s time=3.51043s
+[iter 6] updates=33301 dist=1909297 filtered=1133303 rate=37.2478% cumul=494356887 recall=0.853486 join=0.744539s time=2.4822s
+[iter 7] updates=13229 dist=755402 filtered=445134 rate=37.0779% cumul=495112289 recall=0.85434 join=0.307004s time=2.04817s
+[iter 8] updates=5363 dist=297754 filtered=175182 rate=37.0414% cumul=495410043 recall=0.85468 join=0.124774s time=1.85737s
+[converged] updates=5363 < threshold=10000
+
+[final] Recall = 0.85468
+[final] Total dist_comps = 495410043
+[final] Total time = 124.819s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt090_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt090.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.85
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt085_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt085.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.85 χ²=40.2464 t=6.34401
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.3999s
+[iter 1] updates=5355117 dist=128091697 filtered=84414214 rate=39.7232% cumul=326935344 recall=0.680683 join=22.6978s time=24.5s
+[iter 2] updates=1824993 dist=84873111 filtered=56113950 rate=39.8008% cumul=411808455 recall=0.786469 join=16.0322s time=17.9501s
+[iter 3] updates=606536 dist=35446244 filtered=25075953 rate=41.4327% cumul=447254699 recall=0.824637 join=8.54257s time=10.3443s
+[iter 4] updates=216882 dist=12317951 filtered=9180312 rate=42.7026% cumul=459572650 recall=0.838628 join=3.97951s time=5.7357s
+[iter 5] updates=82361 dist=4439435 filtered=3380057 rate=43.226% cumul=464012085 recall=0.843929 join=1.68579s time=3.41589s
+[iter 6] updates=32334 dist=1689648 filtered=1279231 rate=43.088% cumul=465701733 recall=0.846031 join=0.696974s time=2.42498s
+[iter 7] updates=12709 dist=666613 filtered=499651 rate=42.842% cumul=466368346 recall=0.846845 join=0.288807s time=2.00304s
+[iter 8] updates=5161 dist=261795 filtered=195025 rate=42.6919% cumul=466630141 recall=0.847168 join=0.114399s time=1.85072s
+[converged] updates=5161 < threshold=10000
+
+[final] Recall = 0.847168
+[final] Total dist_comps = 466630141
+[final] Total time = 122.157s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt085_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt085.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.80
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt080_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt080.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.8 χ²=38.4562 t=6.20131
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.487s
+[iter 1] updates=5244393 dist=117219524 filtered=95286387 rate=44.8394% cumul=316063171 recall=0.677003 join=21.8228s time=23.6237s
+[iter 2] updates=1785685 dist=77420685 filtered=62171413 rate=44.5379% cumul=393483856 recall=0.779992 join=15.3984s time=17.344s
+[iter 3] updates=593301 dist=32086748 filtered=27415429 rate=46.0747% cumul=425570604 recall=0.816962 join=8.31133s time=10.116s
+[iter 4] updates=211571 dist=11104210 filtered=9980464 rate=47.3352% cumul=436674814 recall=0.830463 join=3.85775s time=5.63162s
+[iter 5] updates=80171 dist=3986149 filtered=3658577 rate=47.8575% cumul=440660963 recall=0.835558 join=1.62527s time=3.37493s
+[iter 6] updates=31495 dist=1511759 filtered=1385378 rate=47.8189% cumul=442172722 recall=0.837581 join=0.672968s time=2.40844s
+[iter 7] updates=12407 dist=597480 filtered=539927 rate=47.47% cumul=442770202 recall=0.838364 join=0.275506s time=1.98334s
+[iter 8] updates=4940 dist=232564 filtered=212130 rate=47.7025% cumul=443002766 recall=0.83867 join=0.115035s time=1.84279s
+[converged] updates=4940 < threshold=10000
+
+[final] Recall = 0.83867
+[final] Total dist_comps = 443002766
+[final] Total time = 120.34s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt080_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt080.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.75
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt075_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt075.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.75 χ²=36.9634 t=6.07975
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.4493s
+[iter 1] updates=5121995 dist=107755186 filtered=104750725 rate=49.2931% cumul=306598833 recall=0.672751 join=20.9405s time=22.7344s
+[iter 2] updates=1743213 dist=70937310 filtered=67021889 rate=48.5809% cumul=377536143 recall=0.772704 join=14.7357s time=16.6674s
+[iter 3] updates=577831 dist=29197652 filtered=29183522 rate=49.9879% cumul=406733795 recall=0.808323 join=7.93459s time=9.73237s
+[iter 4] updates=205802 dist=10046914 filtered=10553113 rate=51.2286% cumul=416780709 recall=0.821266 join=3.67996s time=5.46103s
+[iter 5] updates=77749 dist=3599573 filtered=3848792 rate=51.673% cumul=420380282 recall=0.826163 join=1.54631s time=3.30165s
+[iter 6] updates=30338 dist=1359582 filtered=1454822 rate=51.692% cumul=421739864 recall=0.828081 join=0.626204s time=2.33423s
+[iter 7] updates=11882 dist=532240 filtered=562373 rate=51.3764% cumul=422272104 recall=0.828821 join=0.254195s time=1.97009s
+[iter 8] updates=4710 dist=206986 filtered=219107 rate=51.4223% cumul=422479090 recall=0.829114 join=0.103703s time=1.83017s
+[converged] updates=4710 < threshold=10000
+
+[final] Recall = 0.829114
+[final] Total dist_comps = 422479090
+[final] Total time = 118.023s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt075_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt075.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.70
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt070_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt070.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.7 χ²=35.6564 t=5.9713
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.3497s
+[iter 1] updates=4988236 dist=99270887 filtered=113235024 rate=53.2856% cumul=298114534 recall=0.668002 join=20.1343s time=21.9273s
+[iter 2] updates=1696773 dist=65116172 filtered=70982897 rate=52.1553% cumul=363230706 recall=0.76462 join=14.1404s time=16.0689s
+[iter 3] updates=562130 dist=26630197 filtered=30512689 rate=53.3972% cumul=389860903 recall=0.798859 join=7.65894s time=9.47386s
+[iter 4] updates=200085 dist=9126582 filtered=10976621 rate=54.6014% cumul=398987485 recall=0.811266 join=3.50395s time=5.26719s
+[iter 5] updates=75269 dist=3260029 filtered=3991812 rate=55.0455% cumul=402247514 recall=0.815953 join=1.46221s time=3.22156s
+[iter 6] updates=29335 dist=1228160 filtered=1500329 rate=54.9875% cumul=403475674 recall=0.817783 join=0.596202s time=2.3287s
+[iter 7] updates=11526 dist=480959 filtered=580502 rate=54.689% cumul=403956633 recall=0.818487 join=0.2417s time=1.96614s
+[iter 8] updates=4579 dist=188935 filtered=228279 rate=54.7151% cumul=404145568 recall=0.818767 join=0.0962499s time=1.81895s
+[converged] updates=4579 < threshold=10000
+
+[final] Recall = 0.818767
+[final] Total dist_comps = 404145568
+[final] Total time = 115.945s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt070_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt070.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.65
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt065_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt065.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.65 χ²=34.4735 t=5.87141
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.4431s
+[iter 1] updates=4843341 dist=91527827 filtered=120978084 rate=56.9293% cumul=290371474 recall=0.662698 join=19.3857s time=21.1795s
+[iter 2] updates=1646597 dist=59793761 filtered=74191079 rate=55.3727% cumul=350165235 recall=0.75576 join=13.5464s time=15.487s
+[iter 3] updates=545154 dist=24293866 filtered=31509161 rate=56.465% cumul=374459101 recall=0.788511 join=7.32265s time=9.13545s
+[iter 4] updates=193734 dist=8286564 filtered=11255890 rate=57.5971% cumul=382745665 recall=0.800346 join=3.28493s time=5.08517s
+[iter 5] updates=72653 dist=2957129 filtered=4082475 rate=57.993% cumul=385702794 recall=0.804787 join=1.38292s time=3.10163s
+[iter 6] updates=28171 dist=1109435 filtered=1532723 rate=58.0103% cumul=386812229 recall=0.806507 join=0.569555s time=2.28647s
+[iter 7] updates=11026 dist=432063 filtered=590885 rate=57.763% cumul=387244292 recall=0.807167 join=0.228492s time=1.9385s
+[iter 8] updates=4450 dist=169744 filtered=230155 rate=57.5533% cumul=387414036 recall=0.807434 join=0.0908583s time=1.79104s
+[converged] updates=4450 < threshold=10000
+
+[final] Recall = 0.807434
+[final] Total dist_comps = 387414036
+[final] Total time = 113.953s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt065_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt065.knng
+
+Done!
+
+============================================================
+[sift1m] init=rptree config=0.60
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt060_build.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt060.knng
+============================================================
+[data] Loaded 1000000 points, dim=128 from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift/sift_base.fvecs (fvecs)
+
+========================================
+  NN-Descent C++ Experiment
+========================================
+n=1000000 dim=128 k=10
+init=RP-Tree
+filter=projection
+
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/sift1M_l2_gt.bin (n=1000000 k=10)
+[proj-filter] Building: m=32 pτ=0.6 χ²=33.3761 t=5.7772
+[proj-filter] Done. Storage: 122 MB
+[init] RP-Tree (L=12)
+[rp-tree] PyNNDescent-style: L=12 leaf_size=50
+[rp-tree] Done. trees=12 leaf_pairs=198843647 dist_comps=198843647
+[init] Done. dist_comps=198843647 time=52.2743s
+[iter 1] updates=4685518 dist=84339335 filtered=128166576 rate=60.312% cumul=283182982 recall=0.656849 join=18.7169s time=20.5027s
+[iter 2] updates=1592055 dist=54821986 filtered=76757917 rate=58.3356% cumul=338004968 recall=0.746048 join=13.0485s time=14.9764s
+[iter 3] updates=526961 dist=22132343 filtered=32177993 rate=59.2484% cumul=360137311 recall=0.777269 join=7.11396s time=8.9408s
+[iter 4] updates=186492 dist=7522676 filtered=11439525 rate=60.328% cumul=367659987 recall=0.788476 join=3.13501s time=4.92945s
+[iter 5] updates=69984 dist=2672896 filtered=4115977 rate=60.6283% cumul=370332883 recall=0.792694 join=1.31875s time=3.06264s
+[iter 6] updates=26969 dist=1004789 filtered=1544885 rate=60.5915% cumul=371337672 recall=0.7943 join=0.535241s time=2.26325s
+[iter 7] updates=10479 dist=389444 filtered=591782 rate=60.3105% cumul=371727116 recall=0.79491 join=0.214304s time=1.93129s
+[iter 8] updates=4209 dist=150395 filtered=227997 rate=60.2542% cumul=371877511 recall=0.795155 join=0.0856467s time=1.78974s
+[converged] updates=4209 < threshold=10000
+
+[final] Recall = 0.795155
+[final] Total dist_comps = 371877511
+[final] Total time = 112.189s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/sift1m_rptree_pt060_build.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/sift1m_rptree_pt060.knng
+
+Done!
+
+=== All SIFT 1M graph construction jobs completed ===
