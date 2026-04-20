@@ -27,6 +27,18 @@ def parse_build(path):
     out["total_time"] = grab(r"total_time=([\d.]+)s", float, 0.0)
     out["recall"] = grab(r"final_recall=([\d.]+)", float, 0.0)
 
+    # Fallback: old log format (no structured summary block)
+    if out["total_dist"] == 0:
+        out["total_dist"] = grab(r"\[final\] Total dist_comps = (\d+)", int, 0)
+    if out["total_time"] == 0.0:
+        out["total_time"] = grab(r"\[final\] Total time = ([\d.]+)s", float, 0.0)
+    if out["recall"] == 0.0:
+        out["recall"] = grab(r"\[final\] Recall = ([\d.]+)", float, 0.0)
+    if out["init_dist"] == 0:
+        out["init_dist"] = grab(r"\[init\] Done\. dist_comps=(\d+)", int, 0)
+    if out["init_time"] == 0.0:
+        out["init_time"] = grab(r"\[init\] Done\. dist_comps=\d+ time=([\d.]+)s", float, 0.0)
+
     if "filter=OFF" in text:
         out["pt"] = None
     else:
@@ -47,6 +59,24 @@ def parse_build(path):
                 "cumul": int(parts[5]),
                 "recall": float(parts[6]),
             })
+
+    # Fallback: parse per-iteration lines from old log format
+    if not out["iters"]:
+        for m in re.finditer(
+            r"\[iter (\d+)\] updates=(\d+) dist=(\d+) filtered=(\d+) "
+            r"rate=(\d+)% cumul=(\d+) recall=([\d.e+-]+)",
+            text,
+        ):
+            out["iters"].append({
+                "iter": int(m.group(1)),
+                "dist": int(m.group(3)),
+                "filtered": int(m.group(4)),
+                "rate": float(m.group(5)),
+                "updates": int(m.group(2)),
+                "cumul": int(m.group(6)),
+                "recall": float(m.group(7)),
+            })
+
     return out
 
 
@@ -106,6 +136,33 @@ def collect_filter_sweep(tag, init):
                         d["iters"] = da["iters"]
         out.append(d)
     out.sort(key=lambda d: (-1 if d["pt"] is None else d["pt"]))
+    return out
+
+
+def collect_mc_sweep(tag):
+    """Return list of build dicts sorted by mc, from *_mc*_nofilter_r1.txt.
+
+    Also includes the mc=40 baseline from the regular nofilter build.
+    Each returned dict has an extra 'mc' key.
+    """
+    pat = os.path.join(RESULTS, f"{tag}_mc*_nofilter_r1.txt")
+    out = []
+    for fp in glob(pat):
+        m = re.search(r"_mc(\d+)_", os.path.basename(fp))
+        if m:
+            mc = int(m.group(1))
+            d = parse_build(fp)
+            d["mc"] = mc
+            out.append(d)
+    # Add mc=40 baseline from the regular nofilter run
+    for suffix in ("_build.txt", "_search.txt"):
+        bp = os.path.join(RESULTS, f"{tag}_random_nofilter{suffix}")
+        if os.path.exists(bp):
+            d = parse_build(bp)
+            d["mc"] = 40
+            out.append(d)
+            break
+    out.sort(key=lambda d: d["mc"])
     return out
 
 

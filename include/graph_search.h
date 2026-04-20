@@ -42,4 +42,5 @@ SearchResult graph_search(
     const std::vector<std::vector<float>>& queries,
     int search_k, int ef, float epsilon,
     int num_entry_points,
-    DistFunc dist_fn);
+    DistFunc dist_fn,
+    int proj_dims = 0);

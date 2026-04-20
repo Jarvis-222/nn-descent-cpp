@@ -1,0 +1,351 @@
+% Cleaned and normalized for IEEE-style output.
+% Intended for use with \bibliographystyle{IEEEtran}.
+%
+% Key renames from the pasted draft:
+%   Malkov.HNSW.TPAMI.2020.10.1109/TPAMI.2018.2889473 -> malkov2020
+%   ruys -> ruys2025
+%   jegou2011product -> jegou2011pq
+%   douze2017faiss -> douze2024faiss
+%   ning2016spq -> ning2017spq
+%   chen2024efficient -> chen2024hybrid
+%   thakkar2023efficient -> bruch2025efficient
+%   aumuller2020ann -> annbenchmarks
+%   chen2022finger -> chen2023finger
+%   shg2025 -> gong2025shg
+%   epasto2020puffinn -> christiani2019puffinn
+%   EFANNA -> fu2016
+%   inproceedings -> ootomo2024
+%
+% Entries from the pasted draft that could not be matched confidently enough
+% to keep as active BibTeX entries:
+%   cai2019revisit
+%   meisburger2020SLASH
+%
+
+@article{malkov2020,
+  author  = {Yu A. Malkov and D. A. Yashunin},
+  title   = {Efficient and robust approximate nearest neighbor search using hierarchical navigable small world graphs},
+  journal = {IEEE Trans. Pattern Anal. Mach. Intell.},
+  volume  = {42},
+  number  = {4},
+  pages   = {824--836},
+  year    = {2020},
+  doi     = {10.1109/TPAMI.2018.2889473},
+  url     = {https://doi.org/10.1109/TPAMI.2018.2889473}
+}
+
+@inproceedings{dong2011,
+  author    = {Wei Dong and Moses Charikar and Kai Li},
+  title     = {Efficient k-nearest neighbor graph construction for generic similarity measures},
+  booktitle = {Proc. 20th Int. Conf. World Wide Web (WWW)},
+  pages     = {577--586},
+  year      = {2011},
+  doi       = {10.1145/1963405.1963487},
+  url       = {https://doi.org/10.1145/1963405.1963487}
+}
+
+@inproceedings{aoyama2011,
+  author    = {Kazuo Aoyama and Kazumi Saito and Hiroshi Sawada and Naonori Ueda},
+  title     = {Fast approximate similarity search based on degree-reduced neighborhood graphs},
+  booktitle = {Proc. 17th ACM SIGKDD Int. Conf. Knowl. Discovery Data Mining (KDD)},
+  pages     = {1055--1063},
+  year      = {2011},
+  doi       = {10.1145/2020408.2020576},
+  url       = {https://doi.org/10.1145/2020408.2020576}
+}
+
+@inproceedings{wang2013,
+  author    = {Jing Wang and Jingdong Wang and Gang Zeng and Rui Gan and Shipeng Li and Baining Guo},
+  title     = {Fast neighborhood graph search using cartesian concatenation},
+  booktitle = {Proc. IEEE Int. Conf. Comput. Vis. (ICCV)},
+  pages     = {2128--2135},
+  year      = {2013},
+  doi       = {10.1109/ICCV.2013.265},
+  url       = {https://doi.org/10.1109/ICCV.2013.265}
+}
+
+@inproceedings{gionis1999lsh,
+  author    = {Aristides Gionis and Piotr Indyk and Rajeev Motwani},
+  title     = {Similarity search in high dimensions via hashing},
+  booktitle = {Proc. 25th Int. Conf. Very Large Data Bases (VLDB)},
+  pages     = {518--529},
+  year      = {1999}
+}
+
+@inproceedings{lv2007multiprobe,
+  author    = {Qin Lv and William Josephson and Zhe Wang and Moses Charikar and Kai Li},
+  title     = {Multi-probe {LSH}: efficient indexing for high-dimensional similarity search},
+  booktitle = {Proc. 33rd Int. Conf. Very Large Data Bases (VLDB)},
+  pages     = {950--961},
+  year      = {2007}
+}
+
+@inproceedings{kong2012isotropic,
+  author    = {Weihao Kong and Wu-Jun Li},
+  title     = {Isotropic hashing},
+  booktitle = {Adv. Neural Inf. Process. Syst. 25 (NeurIPS)},
+  pages     = {1646--1654},
+  year      = {2012}
+}
+
+@inproceedings{kulis2009kernelized,
+  author    = {Brian Kulis and Kristen Grauman},
+  title     = {Kernelized locality-sensitive hashing for scalable image search},
+  booktitle = {Proc. IEEE 12th Int. Conf. Comput. Vis. (ICCV)},
+  pages     = {2130--2137},
+  year      = {2009},
+  doi       = {10.1109/ICCV.2009.5459466},
+  url       = {https://doi.org/10.1109/ICCV.2009.5459466}
+}
+
+@inproceedings{andoni2015optimal,
+  author    = {Alexandr Andoni and Ilya P. Razenshteyn},
+  title     = {Optimal data-dependent hashing for approximate near neighbors},
+  booktitle = {Proc. 47th Annu. ACM Symp. Theory Comput. (STOC)},
+  pages     = {793--801},
+  year      = {2015},
+  doi       = {10.1145/2746539.2746553},
+  url       = {https://doi.org/10.1145/2746539.2746553}
+}
+
+@article{muja2014,
+  author  = {Marius Muja and David G. Lowe},
+  title   = {Scalable nearest neighbor algorithms for high dimensional data},
+  journal = {IEEE Trans. Pattern Anal. Mach. Intell.},
+  volume  = {36},
+  number  = {11},
+  pages   = {2227--2240},
+  year    = {2014},
+  doi     = {10.1109/TPAMI.2014.2321376},
+  url     = {https://doi.org/10.1109/TPAMI.2014.2321376}
+}
+
+@inproceedings{liu2004investigation,
+  author    = {Ting Liu and Andrew W. Moore and Ke Yang and Alexander G. Gray},
+  title     = {An investigation of practical approximate nearest neighbor algorithms},
+  booktitle = {Adv. Neural Inf. Process. Syst. 17 (NeurIPS)},
+  pages     = {825--832},
+  year      = {2004}
+}
+
+@article{ruys2025,
+  author  = {William Ruys and Ali Ghafouri and Chao Chen and George Biros},
+  title   = {Scalable {KNN} graph construction for heterogeneous architectures},
+  journal = {ACM Trans. Parallel Comput.},
+  volume  = {12},
+  number  = {3},
+  pages   = {8:1--8:35},
+  year    = {2025},
+  doi     = {10.1145/3733610},
+  url     = {https://doi.org/10.1145/3733610}
+}
+
+@inproceedings{sinha2017sparse,
+  author    = {Kaushik Sinha and Omid Keivani},
+  title     = {Sparse randomized partition trees for nearest neighbor search},
+  booktitle = {Proc. 20th Int. Conf. Artif. Intell. Stat. (AISTATS)},
+  series    = {Proc. Mach. Learn. Res.},
+  volume    = {54},
+  pages     = {681--689},
+  year      = {2017}
+}
+
+@article{friedman1977,
+  author  = {Jerome H. Friedman and Jon Louis Bentley and Raphael A. Finkel},
+  title   = {An algorithm for finding best matches in logarithmic expected time},
+  journal = {ACM Trans. Math. Software},
+  volume  = {3},
+  number  = {3},
+  pages   = {209--226},
+  year    = {1977},
+  doi     = {10.1145/355744.355745},
+  url     = {https://doi.org/10.1145/355744.355745}
+}
+
+@inproceedings{dasgupta2008,
+  author    = {Sanjoy Dasgupta and Yoav Freund},
+  title     = {Random projection trees and low dimensional manifolds},
+  booktitle = {Proc. 40th Annu. ACM Symp. Theory Comput. (STOC)},
+  pages     = {537--546},
+  year      = {2008},
+  doi       = {10.1145/1374376.1374452},
+  url       = {https://doi.org/10.1145/1374376.1374452}
+}
+
+@article{sandberg2006evolution,
+  author  = {Oskar Sandberg and Ian Clarke},
+  title   = {The evolution of navigable small-world networks},
+  journal = {CoRR},
+  volume  = {abs/cs/0607025},
+  year    = {2006},
+  url     = {https://arxiv.org/abs/cs/0607025}
+}
+
+@article{jegou2011pq,
+  author  = {Herv{\'e} J{\'e}gou and Matthijs Douze and Cordelia Schmid},
+  title   = {Product quantization for nearest neighbor search},
+  journal = {IEEE Trans. Pattern Anal. Mach. Intell.},
+  volume  = {33},
+  number  = {1},
+  pages   = {117--128},
+  year    = {2011},
+  doi     = {10.1109/TPAMI.2010.57},
+  url     = {https://doi.org/10.1109/TPAMI.2010.57}
+}
+
+@inproceedings{ge2013optimized,
+  author    = {Tiezheng Ge and Kaiming He and Qifa Ke and Jian Sun},
+  title     = {Optimized product quantization},
+  booktitle = {Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)},
+  pages     = {2946--2953},
+  year      = {2013},
+  doi       = {10.1109/CVPR.2013.379},
+  url       = {https://doi.org/10.1109/CVPR.2013.379}
+}
+
+@article{douze2024faiss,
+  author  = {Matthijs Douze and Alexandr Guzhva and Chengqi Deng and Jeff Johnson and Gergely Szilvasy and Pierre-Emmanuel Mazar{\'e} and Maria Lomeli and Lucas Hosseini and Herv{\'e} J{\'e}gou},
+  title   = {The {Faiss} library},
+  journal = {CoRR},
+  volume  = {abs/2401.08281},
+  year    = {2024},
+  doi     = {10.48550/arXiv.2401.08281},
+  url     = {https://arxiv.org/abs/2401.08281}
+}
+
+@inproceedings{kalantidis2014lopq,
+  author    = {Yannis Kalantidis and Yannis Avrithis},
+  title     = {Locally optimized product quantization for approximate nearest neighbor search},
+  booktitle = {Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)},
+  pages     = {2329--2336},
+  year      = {2014},
+  doi       = {10.1109/CVPR.2014.298},
+  url       = {https://doi.org/10.1109/CVPR.2014.298}
+}
+
+@article{ning2017spq,
+  author  = {Qingqun Ning and Jianke Zhu and Zhe Zhong and Steven C. H. Hoi and Changsheng Chen},
+  title   = {Scalable image retrieval by sparse product quantization},
+  journal = {IEEE Trans. Multimedia},
+  volume  = {19},
+  number  = {3},
+  pages   = {586--597},
+  year    = {2017},
+  doi     = {10.1109/TMM.2016.2625260},
+  url     = {https://doi.org/10.1109/TMM.2016.2625260}
+}
+
+@article{aumuller2021role,
+  author  = {Martin Aum{\"u}ller and Matteo Ceccarello},
+  title   = {The role of local dimensionality measures in benchmarking nearest neighbor search},
+  journal = {Inf. Syst.},
+  volume  = {101},
+  pages   = {101807},
+  year    = {2021},
+  doi     = {10.1016/j.is.2021.101807},
+  url     = {https://doi.org/10.1016/j.is.2021.101807}
+}
+
+@article{chen2024hybrid,
+  author  = {Haoyu Zhang and Jun Liu and Zhenhua Zhu and Shulin Zeng and Maojia Sheng and Tao Yang and Guohao Dai and Yu Wang},
+  title   = {Efficient and effective retrieval of dense-sparse hybrid vectors using graph-based approximate nearest neighbor search},
+  journal = {CoRR},
+  volume  = {abs/2410.20381},
+  year    = {2024},
+  doi     = {10.48550/arXiv.2410.20381},
+  url     = {https://arxiv.org/abs/2410.20381}
+}
+
+@article{bruch2025efficient,
+  author  = {Sebastian Bruch and Franco Maria Nardini and Cosimo Rulli and Rossano Venturini},
+  title   = {Efficient sketching and nearest neighbor search algorithms for sparse vector sets},
+  journal = {CoRR},
+  volume  = {abs/2509.24815},
+  year    = {2025},
+  doi     = {10.48550/arXiv.2509.24815},
+  url     = {https://arxiv.org/abs/2509.24815}
+}
+
+@inproceedings{chen2023finger,
+  author    = {Patrick H. Chen and Wei-Cheng Chang and Jyun-Yu Jiang and Hsiang-Fu Yu and Inderjit S. Dhillon and Cho-Jui Hsieh},
+  title     = {{FINGER}: fast inference for graph-based approximate nearest neighbor search},
+  booktitle = {Proc. ACM Web Conf. 2023 (WWW '23)},
+  pages     = {3225--3235},
+  year      = {2023},
+  doi       = {10.1145/3543507.3583318},
+  url       = {https://doi.org/10.1145/3543507.3583318}
+}
+
+@article{zhao2023,
+  author  = {Xi Zhao and Yao Tian and Kai Huang and Bolong Zheng and Xiaofang Zhou},
+  title   = {Towards efficient index construction and approximate nearest neighbor search in high-dimensional spaces},
+  journal = {Proc. VLDB Endow.},
+  volume  = {16},
+  number  = {8},
+  pages   = {1979--1991},
+  year    = {2023},
+  doi     = {10.14778/3594512.3594527},
+  url     = {https://doi.org/10.14778/3594512.3594527}
+}
+
+@article{gong2025shg,
+  author  = {Zengyang Gong and Yuxiang Zeng and Lei Chen},
+  title   = {Accelerating approximate nearest neighbor search in hierarchical graphs: efficient level navigation with shortcuts},
+  journal = {Proc. VLDB Endow.},
+  volume  = {18},
+  number  = {10},
+  pages   = {3518--3530},
+  year    = {2025},
+  doi     = {10.14778/3748191.3748212},
+  url     = {https://doi.org/10.14778/3748191.3748212}
+}
+
+@article{annbenchmarks,
+  author  = {Martin Aum{\"u}ller and Erik Bernhardsson and Alexander Faithfull},
+  title   = {{ANN}-Benchmarks: a benchmarking tool for approximate nearest neighbor algorithms},
+  journal = {Inf. Syst.},
+  volume  = {87},
+  pages   = {101374},
+  year    = {2020},
+  doi     = {10.1016/j.is.2019.02.006},
+  url     = {https://doi.org/10.1016/j.is.2019.02.006}
+}
+
+@article{iwasaki2018onng,
+  author  = {Masajiro Iwasaki and Daisuke Miyazaki},
+  title   = {Optimization of indexing based on k-nearest neighbor graph for proximity search in high-dimensional data},
+  journal = {CoRR},
+  volume  = {abs/1810.07355},
+  year    = {2018},
+  url     = {https://arxiv.org/abs/1810.07355}
+}
+
+@inproceedings{christiani2019puffinn,
+  author    = {Tobias Lybecker Christiani and Rasmus Pagh and Martin Aum{\"u}ller and Michael Erik Vesterli},
+  title     = {{PUFFINN}: parameterless and universally fast finding of nearest neighbors},
+  booktitle = {Proc. 27th Annu. Eur. Symp. Algorithms (ESA)},
+  pages     = {10:1--10:16},
+  year      = {2019},
+  doi       = {10.4230/LIPIcs.ESA.2019.10},
+  url       = {https://doi.org/10.4230/LIPIcs.ESA.2019.10}
+}
+
+@article{fu2016,
+  author  = {Cong Fu and Deng Cai},
+  title   = {{EFANNA}: an extremely fast approximate nearest neighbor search algorithm based on {kNN} graph},
+  journal = {CoRR},
+  volume  = {abs/1609.07228},
+  year    = {2016},
+  doi     = {10.48550/arXiv.1609.07228},
+  url     = {https://arxiv.org/abs/1609.07228}
+}
+
+@inproceedings{ootomo2024,
+  author    = {Hiroyuki Ootomo and Akira Naruse and Corey Nolet and Hui Wang and Tam{\'a}s Feh{\'e}r and Yong Wang},
+  title     = {{CAGRA}: highly parallel graph construction and approximate nearest neighbor search for {GPUs}},
+  booktitle = {Proc. 2024 IEEE 40th Int. Conf. Data Eng. (ICDE)},
+  pages     = {4236--4247},
+  year      = {2024},
+  doi       = {10.1109/ICDE60146.2024.00323},
+  url       = {https://doi.org/10.1109/ICDE60146.2024.00323}
+}

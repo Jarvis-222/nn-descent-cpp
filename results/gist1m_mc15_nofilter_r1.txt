@@ -1,64 +1,43 @@
-================================================================
-  NN-Descent Experiment Report
-  Generated: Wed Apr 15 20:30:46 2026
-================================================================
+============================================================
+[gist1m] init=random mc=15 (nofilter)
+report=/home/j2pandya/nn-descent/nn-descent-cpp/results/gist1m_mc15_nofilter_r1.txt
+graph=/home/j2pandya/nn-descent/nn-descent-cpp/graphs/gist1m_mc15_nofilter_r1.knng
+============================================================
+[data] Loaded 1000000 points, dim=960 from /home/j2pandya/nn-descent/nn-descent-cpp/data/gist/gist_base.fvecs (fvecs)
 
---- Configuration ---
+========================================
+  NN-Descent C++ Experiment
+========================================
 n=1000000 dim=960 k=10
-init=Random metric=Euclidean
-rho=0.5 delta=0.001 max_iter=20
+init=Random
 filter=OFF
 
---- Summary ---
-init_dist_comps=10000000 init_time=13.3050s
-iterations=20 total_dist=914502503 total_filtered=0
-total_time=1005.4680s final_recall=0.424308
+[ground-truth] Loaded from /home/j2pandya/nn-descent/nn-descent-cpp/data/gist1m_l2_gt.bin (n=1000000 k=10)
+[init] Random
+[init] Done. dist_comps=10000000 time=9.618s
+[iter 1] updates=30139306 dist=104417275 filtered=0 rate=0% cumul=114417275 recall=0.0002152 join=69.8632s time=71.9204s
+[iter 2] updates=15115030 dist=94658372 filtered=0 rate=0% cumul=209075647 recall=0.0016863 join=62.7626s time=64.5927s
+[iter 3] updates=11892409 dist=106911524 filtered=0 rate=0% cumul=315987171 recall=0.0084664 join=70.5077s time=72.2513s
+[iter 4] updates=9438869 dist=105306647 filtered=0 rate=0% cumul=421293818 recall=0.0313181 join=69.4926s time=71.2082s
+[iter 5] updates=7386354 dist=97623063 filtered=0 rate=0% cumul=518916881 recall=0.079552 join=64.6413s time=66.3646s
+[iter 6] updates=5453286 dist=87313498 filtered=0 rate=0% cumul=606230379 recall=0.14737 join=58.1864s time=59.8768s
+[iter 7] updates=3731533 dist=75880783 filtered=0 rate=0% cumul=682111162 recall=0.219065 join=50.7414s time=52.4119s
+[iter 8] updates=2465403 dist=63545760 filtered=0 rate=0% cumul=745656922 recall=0.280055 join=42.9237s time=44.5503s
+[iter 9] updates=1640145 dist=50016518 filtered=0 rate=0% cumul=795673440 recall=0.325938 join=34.4921s time=36.0955s
+[iter 10] updates=1100394 dist=36996708 filtered=0 rate=0% cumul=832670148 recall=0.35831 join=25.91s time=27.5029s
+[iter 11] updates=743575 dist=26215913 filtered=0 rate=0% cumul=858886061 recall=0.380584 join=18.845s time=20.4012s
+[iter 12] updates=502661 dist=18211216 filtered=0 rate=0% cumul=877097277 recall=0.395486 join=13.362s time=14.9133s
+[iter 13] updates=340320 dist=12477286 filtered=0 rate=0% cumul=889574563 recall=0.405414 join=9.39181s time=10.9255s
+[iter 14] updates=232034 dist=8487176 filtered=0 rate=0% cumul=898061739 recall=0.412052 join=6.56523s time=8.10038s
+[iter 15] updates=158561 dist=5808480 filtered=0 rate=0% cumul=903870219 recall=0.416478 join=4.57347s time=6.09233s
+[iter 16] updates=108139 dist=3961991 filtered=0 rate=0% cumul=907832210 recall=0.419454 join=3.17462s time=4.69515s
+[iter 17] updates=74047 dist=2698927 filtered=0 rate=0% cumul=910531137 recall=0.421443 join=2.20071s time=3.71826s
+[iter 18] updates=50688 dist=1841546 filtered=0 rate=0% cumul=912372683 recall=0.422779 join=1.52445s time=3.0404s
+[iter 19] updates=35199 dist=1258448 filtered=0 rate=0% cumul=913631131 recall=0.423682 join=1.05742s time=2.57417s
+[iter 20] updates=24345 dist=871372 filtered=0 rate=0% cumul=914502503 recall=0.424308 join=0.741036s time=2.2496s
 
---- Per-Iteration ---
-Iter  Updates   DistComps     Filtered      Rate%     CumulDist     Recall    
-------------------------------------------------------------------------------
-1     30139306  104417275     0             0.00      114417275     0.0002    
-2     15115030  94658372      0             0.00      209075647     0.0017    
-3     11892409  106911524     0             0.00      315987171     0.0085    
-4     9438869   105306647     0             0.00      421293818     0.0313    
-5     7386354   97623063      0             0.00      518916881     0.0796    
-6     5453286   87313498      0             0.00      606230379     0.1474    
-7     3731533   75880783      0             0.00      682111162     0.2191    
-8     2465403   63545760      0             0.00      745656922     0.2801    
-9     1640145   50016518      0             0.00      795673440     0.3259    
-10    1100394   36996708      0             0.00      832670148     0.3583    
-11    743575    26215913      0             0.00      858886061     0.3806    
-12    502661    18211216      0             0.00      877097277     0.3955    
-13    340320    12477286      0             0.00      889574563     0.4054    
-14    232034    8487176       0             0.00      898061739     0.4121    
-15    158561    5808480       0             0.00      903870219     0.4165    
-16    108139    3961991       0             0.00      907832210     0.4195    
-17    74047     2698927       0             0.00      910531137     0.4214    
-18    50688     1841546       0             0.00      912372683     0.4228    
-19    35199     1258448       0             0.00      913631131     0.4237    
-20    24345     871372        0             0.00      914502503     0.4243    
-
---- CSV ---
-iter,dist_comps,filtered,filter_rate,updates,cumul_dist,recall
-1,104417275,0,0.000000,30139306,114417275,0.000215
-2,94658372,0,0.000000,15115030,209075647,0.001686
-3,106911524,0,0.000000,11892409,315987171,0.008466
-4,105306647,0,0.000000,9438869,421293818,0.031318
-5,97623063,0,0.000000,7386354,518916881,0.079552
-6,87313498,0,0.000000,5453286,606230379,0.147370
-7,75880783,0,0.000000,3731533,682111162,0.219065
-8,63545760,0,0.000000,2465403,745656922,0.280055
-9,50016518,0,0.000000,1640145,795673440,0.325938
-10,36996708,0,0.000000,1100394,832670148,0.358310
-11,26215913,0,0.000000,743575,858886061,0.380584
-12,18211216,0,0.000000,502661,877097277,0.395486
-13,12477286,0,0.000000,340320,889574563,0.405414
-14,8487176,0,0.000000,232034,898061739,0.412052
-15,5808480,0,0.000000,158561,903870219,0.416478
-16,3961991,0,0.000000,108139,907832210,0.419454
-17,2698927,0,0.000000,74047,910531137,0.421443
-18,1841546,0,0.000000,50688,912372683,0.422779
-19,1258448,0,0.000000,35199,913631131,0.423682
-20,871372,0,0.000000,24345,914502503,0.424308
-
-================================================================
+[final] Recall = 0.424308
+[final] Total dist_comps = 914502503
+[final] Total time = 656.076s
+[report] Written to /home/j2pandya/nn-descent/nn-descent-cpp/results/gist1m_mc15_nofilter_r1.txt
+[graph] Saved graph to /home/j2pandya/nn-descent/nn-descent-cpp/graphs/gist1m_mc15_nofilter_r1.knng

@@ -78,6 +78,7 @@ int main(int argc, char** argv) {
     std::vector<int> ef_list;
     float epsilon = 0.1f;
     int num_entry_points = 1;
+    int search_proj_dims = 0;
 
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
@@ -155,6 +156,8 @@ int main(int argc, char** argv) {
             epsilon = std::stof(argv[++i]);
         } else if (arg == "--entry-points" && i + 1 < argc) {
             num_entry_points = std::stoi(argv[++i]);
+        } else if (arg == "--search-proj-dims" && i + 1 < argc) {
+            search_proj_dims = std::stoi(argv[++i]);
         } else if (arg == "--help" || arg == "-h") {
             print_usage(argv[0]);
             return 0;
@@ -325,7 +328,8 @@ int main(int argc, char** argv) {
         for (int ef : ef_list) {
             SearchResult sr = graph_search(graph, data, queries,
                                            sk, ef, epsilon,
-                                           num_entry_points, dist_fn);
+                                           num_entry_points, dist_fn,
+                                           search_proj_dims);
 
             double recall = 0.0;
             if (!search_gt.empty()) {

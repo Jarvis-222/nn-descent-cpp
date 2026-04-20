@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cmath>
 #include <unordered_set>
+#include <numeric>
 
 namespace {
 
@@ -12,7 +13,7 @@ struct SearchTreeNode {
     int left = -1;
     int right = -1;
     float hyperplane_offset = 0.0f;
-    std::vector<float> normal;
+    std::vector<float> normal;  // length = split_dim (full d or proj_dims)
     std::vector<int> points;
 
     bool is_leaf() const { return left < 0 && right < 0; }
@@ -27,14 +28,22 @@ struct SearchForestCache {
     const std::vector<std::vector<float>>* data_ptr = nullptr;
     int num_trees = 0;
     int leaf_size = 0;
+    int proj_dims = 0;
     std::vector<SearchTree> forest;
+    // projected data used when proj_dims > 0: flat [n * proj_dims]
+    std::vector<float> proj_data;
+    // projection matrix: [proj_dims * orig_dim]
+    std::vector<float> proj_matrix;
 };
 
 SearchForestCache g_search_forest_cache;
 
-int build_search_tree(
-    const std::vector<std::vector<float>>& data,
-    int dim,
+// Build tree using coordinates in `coords` (each point is coords_dim floats).
+// `indices` are indices into the original dataset; coords[idx * coords_dim + d]
+// gives coordinate d of point idx.
+int build_search_tree_coords(
+    const float* coords,
+    int coords_dim,
     std::vector<int>& indices,
     int leaf_size,
     int max_depth,
@@ -55,10 +64,14 @@ int build_search_tree(
     while (bi == ai) bi = uid(rng);
     int pa = indices[ai], pb = indices[bi];
 
-    node.normal.resize(dim);
-    for (int d = 0; d < dim; d++) {
-        node.normal[d] = data[pa][d] - data[pb][d];
-        node.hyperplane_offset -= node.normal[d] * (data[pa][d] + data[pb][d]) * 0.5f;
+    const float* ca = coords + (size_t)pa * coords_dim;
+    const float* cb = coords + (size_t)pb * coords_dim;
+
+    node.normal.resize(coords_dim);
+    node.hyperplane_offset = 0.0f;
+    for (int d = 0; d < coords_dim; d++) {
+        node.normal[d] = ca[d] - cb[d];
+        node.hyperplane_offset -= node.normal[d] * (ca[d] + cb[d]) * 0.5f;
     }
 
     std::vector<int> left, right;
@@ -66,9 +79,10 @@ int build_search_tree(
     right.reserve(indices.size() / 2);
     std::uniform_int_distribution<int> coin(0, 1);
     for (int idx : indices) {
+        const float* c = coords + (size_t)idx * coords_dim;
         float margin = node.hyperplane_offset;
-        for (int d = 0; d < dim; d++)
-            margin += node.normal[d] * data[idx][d];
+        for (int d = 0; d < coords_dim; d++)
+            margin += node.normal[d] * c[d];
 
         if (std::fabs(margin) < 1e-8f) {
             if (coin(rng) == 0) left.push_back(idx);
@@ -81,8 +95,7 @@ int build_search_tree(
     }
 
     if (left.empty() || right.empty()) {
-        left.clear();
-        right.clear();
+        left.clear(); right.clear();
         for (int idx : indices) {
             if (coin(rng) == 0) left.push_back(idx);
             else                right.push_back(idx);
@@ -97,58 +110,104 @@ int build_search_tree(
 
     int node_id = (int)tree.nodes.size();
     tree.nodes.push_back(std::move(node));
-    tree.nodes[node_id].left = build_search_tree(data, dim, left, leaf_size, max_depth, depth + 1, rng, tree);
-    tree.nodes[node_id].right = build_search_tree(data, dim, right, leaf_size, max_depth, depth + 1, rng, tree);
+    tree.nodes[node_id].left  = build_search_tree_coords(coords, coords_dim, left,  leaf_size, max_depth, depth + 1, rng, tree);
+    tree.nodes[node_id].right = build_search_tree_coords(coords, coords_dim, right, leaf_size, max_depth, depth + 1, rng, tree);
     return node_id;
 }
 
-const std::vector<SearchTree>& get_search_forest(
-    const std::vector<std::vector<float>>& data,
-    int num_trees,
-    int leaf_size)
-{
-    if (g_search_forest_cache.data_ptr == &data &&
-        g_search_forest_cache.num_trees == num_trees &&
-        g_search_forest_cache.leaf_size == leaf_size) {
-        return g_search_forest_cache.forest;
-    }
-
-    int n = (int)data.size();
-    int dim = (int)data[0].size();
-    int max_depth = 200;
-
-    g_search_forest_cache.data_ptr = &data;
-    g_search_forest_cache.num_trees = num_trees;
-    g_search_forest_cache.leaf_size = leaf_size;
-    g_search_forest_cache.forest.clear();
-    g_search_forest_cache.forest.reserve(num_trees);
-
-    std::mt19937 rng(12345);
-    for (int t = 0; t < num_trees; t++) {
-        SearchTree tree;
-        std::vector<int> indices(n);
-        for (int i = 0; i < n; i++) indices[i] = i;
-        tree.root = build_search_tree(data, dim, indices, leaf_size, max_depth, 0, rng, tree);
-        g_search_forest_cache.forest.push_back(std::move(tree));
-    }
-
-    return g_search_forest_cache.forest;
-}
-
-const std::vector<int>& descend_tree(
+// Descend a tree built with coords_dim-dimensional normals.
+// query_coords must also be in the same coords_dim-dimensional space.
+const std::vector<int>& descend_tree_coords(
     const SearchTree& tree,
-    const float* query,
-    int dim)
+    const float* query_coords,
+    int coords_dim)
 {
     int node_id = tree.root;
     while (!tree.nodes[node_id].is_leaf()) {
         const SearchTreeNode& node = tree.nodes[node_id];
         float margin = node.hyperplane_offset;
-        for (int d = 0; d < dim; d++)
-            margin += node.normal[d] * query[d];
+        for (int d = 0; d < coords_dim; d++)
+            margin += node.normal[d] * query_coords[d];
         node_id = (margin >= 0.0f) ? node.left : node.right;
     }
     return tree.nodes[node_id].points;
+}
+
+const std::vector<SearchTree>& get_search_forest(
+    const std::vector<std::vector<float>>& data,
+    int num_trees,
+    int leaf_size,
+    int proj_dims)
+{
+    if (g_search_forest_cache.data_ptr == &data &&
+        g_search_forest_cache.num_trees == num_trees &&
+        g_search_forest_cache.leaf_size == leaf_size &&
+        g_search_forest_cache.proj_dims == proj_dims) {
+        return g_search_forest_cache.forest;
+    }
+
+    int n   = (int)data.size();
+    int dim = (int)data[0].size();
+    int max_depth = 200;
+
+    g_search_forest_cache.data_ptr  = &data;
+    g_search_forest_cache.num_trees = num_trees;
+    g_search_forest_cache.leaf_size = leaf_size;
+    g_search_forest_cache.proj_dims = proj_dims;
+    g_search_forest_cache.forest.clear();
+    g_search_forest_cache.forest.reserve(num_trees);
+
+    // Choose the coordinate space for tree splits.
+    const float* coords = nullptr;
+    int coords_dim = dim;
+
+    if (proj_dims > 0 && proj_dims < dim) {
+        // Build proj_dims random Gaussian directions (fixed seed, same for all queries).
+        std::mt19937 rng_proj(99991);
+        std::normal_distribution<float> nd(0.0f, 1.0f);
+
+        int pm_size = proj_dims * dim;
+        g_search_forest_cache.proj_matrix.resize(pm_size);
+        for (int i = 0; i < pm_size; i++)
+            g_search_forest_cache.proj_matrix[i] = nd(rng_proj);
+
+        // Project all data points: proj_data[i * proj_dims + j] = A_j · x_i
+        g_search_forest_cache.proj_data.resize((size_t)n * proj_dims);
+        const float* A = g_search_forest_cache.proj_matrix.data();
+        for (int i = 0; i < n; i++) {
+            const float* xi = data[i].data();
+            float* pi = g_search_forest_cache.proj_data.data() + (size_t)i * proj_dims;
+            for (int j = 0; j < proj_dims; j++) {
+                const float* Aj = A + j * dim;
+                float dot = 0.0f;
+                for (int d = 0; d < dim; d++) dot += Aj[d] * xi[d];
+                pi[j] = dot;
+            }
+        }
+
+        coords     = g_search_forest_cache.proj_data.data();
+        coords_dim = proj_dims;
+    } else {
+        // Use original coordinates flattened into a contiguous array.
+        g_search_forest_cache.proj_data.resize((size_t)n * dim);
+        for (int i = 0; i < n; i++)
+            std::copy(data[i].begin(), data[i].end(),
+                      g_search_forest_cache.proj_data.begin() + (size_t)i * dim);
+        coords     = g_search_forest_cache.proj_data.data();
+        coords_dim = dim;
+    }
+
+    std::mt19937 rng(12345);
+    for (int t = 0; t < num_trees; t++) {
+        SearchTree tree;
+        std::vector<int> indices(n);
+        std::iota(indices.begin(), indices.end(), 0);
+        tree.root = build_search_tree_coords(coords, coords_dim, indices,
+                                             leaf_size, max_depth, 0, rng, tree);
+        g_search_forest_cache.forest.push_back(std::move(tree));
+    }
+
+    return g_search_forest_cache.forest;
 }
 
 } // namespace
@@ -159,7 +218,8 @@ SearchResult graph_search(
     const std::vector<std::vector<float>>& queries,
     int search_k, int ef, float epsilon,
     int num_entry_points,
-    DistFunc dist_fn)
+    DistFunc dist_fn,
+    int proj_dims)
 {
     int n = graph.n;
     int dim = (int)data[0].size();
@@ -169,7 +229,10 @@ SearchResult graph_search(
     if (num_entry_points < 1) num_entry_points = 1;
 
     int leaf_size = std::max(10, std::min(256, 5 * std::max(graph.k, search_k)));
-    const auto& forest = get_search_forest(data, num_entry_points, leaf_size);
+    const auto& forest = get_search_forest(data, num_entry_points, leaf_size, proj_dims);
+
+    // Effective coordinate dimension for tree descent.
+    int coords_dim = (proj_dims > 0 && proj_dims < dim) ? proj_dims : dim;
 
     SearchResult result;
     result.indices.resize(nq);
@@ -193,8 +256,23 @@ SearchResult graph_search(
         std::unordered_set<int> initial_nodes;
         initial_nodes.reserve((size_t)num_entry_points * (size_t)leaf_size);
 
+        // Project query to the same space the trees were built in.
+        std::vector<float> query_coords;
+        const float* q_coords_ptr = query;
+        if (proj_dims > 0 && proj_dims < dim) {
+            query_coords.resize(proj_dims);
+            const float* A = g_search_forest_cache.proj_matrix.data();
+            for (int j = 0; j < proj_dims; j++) {
+                const float* Aj = A + j * dim;
+                float dot = 0.0f;
+                for (int d = 0; d < dim; d++) dot += Aj[d] * query[d];
+                query_coords[j] = dot;
+            }
+            q_coords_ptr = query_coords.data();
+        }
+
         for (const auto& tree : forest) {
-            const auto& leaf = descend_tree(tree, query, dim);
+            const auto& leaf = descend_tree_coords(tree, q_coords_ptr, coords_dim);
             for (int idx : leaf)
                 initial_nodes.insert(idx);
         }
