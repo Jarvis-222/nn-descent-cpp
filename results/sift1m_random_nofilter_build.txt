@@ -1,6 +1,6 @@
 ================================================================
   NN-Descent Experiment Report
-  Generated: Tue Apr 14 18:48:56 2026
+  Generated: Mon Apr 20 10:04:40 2026
 ================================================================
 
 --- Configuration ---
@@ -10,9 +10,9 @@ rho=0.5 delta=0.001 max_iter=20
 filter=OFF
 
 --- Summary ---
-init_dist_comps=10000000 init_time=3.3173s
+init_dist_comps=10000000 init_time=3.3749s
 iterations=14 total_dist=1536183510 total_filtered=0
-total_time=210.4127s final_recall=0.864099
+total_time=210.4295s final_recall=0.864099
 
 --- Per-Iteration ---
 Iter  Updates   DistComps     Filtered      Rate%     CumulDist     Recall    

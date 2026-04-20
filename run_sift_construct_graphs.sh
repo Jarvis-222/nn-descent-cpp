@@ -6,12 +6,12 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 BIN="${BIN:-$SCRIPT_DIR/build/nn_descent}"
 
 DATA="$SCRIPT_DIR/data/sift/sift_base.fvecs"
-GT="$SCRIPT_DIR/data/sift1m_l2_gt.bin"
+GT="$SCRIPT_DIR/data/sift1M_l2_gt.bin"
 TAG="sift1m"
 
 K=10
 MC=40
-PROJ=32
+PROJ=("8" "16")
 PTS=("nofilter" "0.99" "0.95" "0.90" "0.85" "0.80" "0.75" "0.70" "0.65" "0.60")
 INITS=("random" "rptree")
 ONLY_INIT="${ONLY_INIT:-}"
